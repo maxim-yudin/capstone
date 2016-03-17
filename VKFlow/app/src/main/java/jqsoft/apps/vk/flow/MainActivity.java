@@ -16,6 +16,9 @@ import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdk.LoginState;
 import com.vk.sdk.api.VKError;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Activity which displays a login screen to the user, offering registration as
  * well.
@@ -117,13 +120,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View fragmentView = inflater.inflate(R.layout.fragment_sign_in, container, false);
-            fragmentView.findViewById(R.id.btnSignIn).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    VKSdk.login(getActivity(), scope);
-                }
-            });
+            ButterKnife.bind(this, fragmentView);
             return fragmentView;
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            ButterKnife.unbind(this);
+        }
+
+        @OnClick(R.id.btnSignIn)
+        public void signIn() {
+            VKSdk.login(getActivity(), scope);
         }
     }
 
@@ -131,23 +140,27 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View fragmentView = inflater.inflate(R.layout.fragment_sign_out, container, false);
-            fragmentView.findViewById(R.id.btnRunMainForm).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ((MainActivity) getActivity()).startMainActivity();
-                }
-            });
-
-            fragmentView.findViewById(R.id.btnSignOut).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    VKSdk.logout();
-                    if (!VKSdk.isLoggedIn()) {
-                        ((MainActivity) getActivity()).showLoginForm();
-                    }
-                }
-            });
+            ButterKnife.bind(this, fragmentView);
             return fragmentView;
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            ButterKnife.unbind(this);
+        }
+
+        @OnClick(R.id.btnRunMainForm)
+        public void runMainForm() {
+            ((MainActivity) getActivity()).startMainActivity();
+        }
+
+        @OnClick(R.id.btnSignOut)
+        public void signOut() {
+            VKSdk.logout();
+            if (!VKSdk.isLoggedIn()) {
+                ((MainActivity) getActivity()).showLoginForm();
+            }
         }
     }
 
