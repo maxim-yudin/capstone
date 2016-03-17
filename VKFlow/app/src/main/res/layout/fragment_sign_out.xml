@@ -1,0 +1,19 @@
+<LinearLayout
+    style="@style/Container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btnRunMainForm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/run_main_form"/>
+
+    <Button
+        android:id="@+id/btnSignOut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_out"/>
+</LinearLayout>
+

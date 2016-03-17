@@ -17,7 +17,7 @@ public class VKFlowApplication extends Application {
         public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
             if (newToken == null) {
                 // if access token is invalidated, then we're running app with a clean slate
-                Intent intent = new Intent(VKFlowApplication.this, LoginActivity.class);
+                Intent intent = new Intent(VKFlowApplication.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
