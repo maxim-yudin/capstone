@@ -7,8 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -24,6 +26,8 @@ import butterknife.OnClick;
  * well.
  */
 public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_NEWS_PIECE = 1;
+
     /**
      * Scope is set of required permissions for your application
      *
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
             VKScope.WALL, VKScope.FRIENDS
     };
     private boolean isResumed = false;
+
+    InterstitialAd interstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(getString(R.string.test_interstitial_ad_unit_id));
+        requestNewInterstitial();
+
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+            }
+        });
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        interstitialAd.loadAd(adRequest);
     }
 
     @Override
@@ -74,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             showLoginForm();
         }
+
+        if (!interstitialAd.isLoaded()) {
+            requestNewInterstitial();
+        }
     }
 
     @Override
@@ -84,21 +113,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-                // User passed Authorization
-                startMainActivity();
+        if (requestCode == REQUEST_NEWS_PIECE) {
+            if (interstitialAd.isLoaded()) {
+                interstitialAd.show();
             }
+        } else {
+            VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
+                @Override
+                public void onResult(VKAccessToken res) {
+                    // User passed Authorization
+                    startMainActivity();
+                }
 
-            @Override
-            public void onError(VKError error) {
-                // User didn't pass Authorization
+                @Override
+                public void onError(VKError error) {
+                    // User didn't pass Authorization
+                }
+            };
+
+            if (!VKSdk.onActivityResult(requestCode, resultCode, data, callback)) {
+                super.onActivityResult(requestCode, resultCode, data);
             }
-        };
-
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, callback)) {
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -165,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startMainActivity() {
-        Toast.makeText(this, R.string.run_main_form, Toast.LENGTH_SHORT).show();
+        Intent newsActivity = new Intent(this, NewsActivity.class);
+        startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
     }
 }

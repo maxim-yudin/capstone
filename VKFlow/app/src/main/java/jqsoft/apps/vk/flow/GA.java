@@ -35,6 +35,9 @@ public class GA {
         }
 
         sInstance = new GA(context);
+
+        // first initialization tracker
+        getInstance().get(Target.APP);
     }
 
     public static synchronized GA getInstance() {
