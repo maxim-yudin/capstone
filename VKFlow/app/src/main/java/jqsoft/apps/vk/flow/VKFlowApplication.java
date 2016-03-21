@@ -29,5 +29,6 @@ public class VKFlowApplication extends Application {
         super.onCreate();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
+        GA.initialize(this);
     }
 }

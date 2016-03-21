@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_id": "vk-flow",
+    "project_number": "157208998919",
+    "name": "VK Flow"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157208998919:android:392760178f57fa13",
+        "client_id": "android:jqsoft.apps.vkflow",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "jqsoft.apps.vkflow",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-68379222-3"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 2,
+          "test_banner_ad_unit_id": "ca-app-pub-3940256099942544/6300978111",
+          "test_interstitial_ad_unit_id": "ca-app-pub-3940256099942544/1033173712"
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
