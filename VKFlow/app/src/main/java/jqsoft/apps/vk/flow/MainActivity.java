@@ -20,12 +20,13 @@ import com.vk.sdk.api.VKError;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jqsoft.apps.vk.flow.fragments.MainFragment;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainFragment.CallbackActions {
     private static final int REQUEST_NEWS_PIECE = 1;
 
     /**
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     };
     private boolean isResumed = false;
 
-    InterstitialAd interstitialAd;
+    private InterstitialAd interstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                             showLoginForm();
                             break;
                         case LoggedIn:
-                            showLogoutForm();
+                            showMainForm();
                             break;
                         case Pending:
                             break;
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         isResumed = true;
         if (VKSdk.isLoggedIn()) {
-            showLogoutForm();
+            showMainForm();
         } else {
             showLoginForm();
         }
@@ -122,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResult(VKAccessToken res) {
                     // User passed Authorization
-                    startMainActivity();
                 }
 
                 @Override
@@ -137,24 +137,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showLogoutForm() {
+    private void showMainForm() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container, new LogoutFragment())
+                .replace(R.id.container, MainFragment.newInstance())
                 .commitAllowingStateLoss();
     }
 
     private void showLoginForm() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container, new LoginFragment())
+                .replace(R.id.container, LoginFragment.newInstance())
                 .commitAllowingStateLoss();
     }
 
     public static class LoginFragment extends Fragment {
+        public static LoginFragment newInstance() {
+            return new LoginFragment();
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View fragmentView = inflater.inflate(R.layout.fragment_sign_in, container, false);
+            View fragmentView = inflater.inflate(R.layout.fragment_login, container, false);
             ButterKnife.bind(this, fragmentView);
             return fragmentView;
         }
@@ -171,36 +175,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static class LogoutFragment extends Fragment {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View fragmentView = inflater.inflate(R.layout.fragment_sign_out, container, false);
-            ButterKnife.bind(this, fragmentView);
-            return fragmentView;
-        }
-
-        @Override
-        public void onDestroyView() {
-            super.onDestroyView();
-            ButterKnife.unbind(this);
-        }
-
-        @OnClick(R.id.btnRunMainForm)
-        public void runMainForm() {
-            ((MainActivity) getActivity()).startMainActivity();
-        }
-
-        @OnClick(R.id.btnSignOut)
-        public void signOut() {
-            VKSdk.logout();
-            if (!VKSdk.isLoggedIn()) {
-                ((MainActivity) getActivity()).showLoginForm();
-            }
-        }
+    @Override
+    public void onNewsItemSelected(String chosenNewsItem) {
+        Intent newsActivity = new Intent(this, NewsPieceActivity.class);
+        startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
     }
 
-    private void startMainActivity() {
-        Intent newsActivity = new Intent(this, NewsActivity.class);
-        startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
+    @Override
+    public void onSignOut() {
+        VKSdk.logout();
+        if (!VKSdk.isLoggedIn()) {
+            showLoginForm();
+        }
     }
 }

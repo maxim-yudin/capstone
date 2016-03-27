@@ -30,7 +30,7 @@ dependencies {
     compile 'com.github.provigen:ProviGen-lib:2.0.1'
     compile 'com.vk:androidsdk:1.6.5'
     compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile fileTree(dir: 'libs', include: ['*.jar'])
