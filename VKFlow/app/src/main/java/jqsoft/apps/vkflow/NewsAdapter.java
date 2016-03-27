@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import jqsoft.apps.vkflow.R;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public interface OnNewsItemClickListener {
