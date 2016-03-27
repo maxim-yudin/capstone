@@ -25,7 +25,7 @@ public class MainFragment extends Fragment {
      */
     private CallbackActions callbackActions = dummyCallbackActions;
 
-    @Bind(R.id.rvNews) private RecyclerView rvNews;
+    @Bind(R.id.rvNews) RecyclerView rvNews;
 
     private NewsAdapter newsAdapter;
     private RecyclerView.LayoutManager newsLayoutManager;
