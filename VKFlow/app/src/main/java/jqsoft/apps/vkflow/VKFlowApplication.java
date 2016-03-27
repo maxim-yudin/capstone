@@ -1,4 +1,4 @@
-package jqsoft.apps.vk.flow;
+package jqsoft.apps.vkflow;
 
 import android.app.Application;
 import android.content.Intent;

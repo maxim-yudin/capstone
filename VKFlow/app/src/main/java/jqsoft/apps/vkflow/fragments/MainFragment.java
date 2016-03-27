@@ -1,4 +1,4 @@
-package jqsoft.apps.vk.flow.fragments;
+package jqsoft.apps.vkflow.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import jqsoft.apps.vk.flow.NewsAdapter;
-import jqsoft.apps.vk.flow.NewsAdapter.OnNewsItemClickListener;
-import jqsoft.apps.vk.flow.R;
+import jqsoft.apps.vkflow.NewsAdapter;
+import jqsoft.apps.vkflow.NewsAdapter.OnNewsItemClickListener;
+import jqsoft.apps.vkflow.R;
 
 public class MainFragment extends Fragment {
     /**

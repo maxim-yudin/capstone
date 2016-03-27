@@ -1,4 +1,4 @@
-package jqsoft.apps.vk.flow;
+package jqsoft.apps.vkflow;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +20,8 @@ import com.vk.sdk.api.VKError;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import jqsoft.apps.vk.flow.fragments.MainFragment;
+import jqsoft.apps.vkflow.fragments.MainFragment;
+import jqsoft.apps.vkflow.R;
 
 /**
  * Activity which displays a login screen to the user, offering registration as

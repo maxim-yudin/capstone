@@ -1,4 +1,4 @@
-package jqsoft.apps.vk.flow;
+package jqsoft.apps.vkflow;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jqsoft.apps.vkflow.R;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public interface OnNewsItemClickListener {
