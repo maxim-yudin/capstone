@@ -3,6 +3,10 @@
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
 
+    <string name="sample_text_date">10 hours ago</string>
+    <string name="sample_text_news_content">Lorem ipsum donec porttitor, congue ultricies gravida ut risus odio auctor sodales ut. Nec quisque massa elementum sagittis urna nec ultricies gravida non malesuada donec — congue. Sed rutrum amet massa morbi magna: ipsum eget donec, molestie sagittis, arcu — eros sapien urna mattis arcu magna vulputate leo eget congue.</string>
+    <string name="sample_text_friend_name">Hugh Laurie. Clone #%1$s</string>
+
     <!-- VK app for an access to VK API -->
     <integer name="com_vk_sdk_AppId">0<!-- Instead of 0 you need write right app id --></integer>
 </resources>

@@ -19,7 +19,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private final String[] newsSet;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.tvNewsTitle) TextView tvNewsTitle;
+        @Bind(R.id.tvFriendName) TextView tvNewsTitle;
 
         public ViewHolder(View itemView) {
             super(itemView);

@@ -10,4 +10,6 @@
 
     <dimen name="card_content_padding">@dimen/margin_standard</dimen>
     <dimen name="card_content_padding_more">24dp</dimen>
+
+    <dimen name="profile_photo_size">48dp</dimen>
 </resources>

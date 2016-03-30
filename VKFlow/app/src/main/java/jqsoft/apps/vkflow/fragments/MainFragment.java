@@ -88,7 +88,7 @@ public class MainFragment extends Fragment {
     private void initNewsList() {
         newsList = new String[20];
         for (int i = 0; i < 20; i++) {
-            newsList[i] = "A piece of news #" + i;
+            newsList[i] = getString(R.string.sample_text_friend_name, i);
         }
     }
 
