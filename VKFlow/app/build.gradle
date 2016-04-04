@@ -28,7 +28,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
     compile 'com.github.provigen:ProviGen-lib:2.0.1'
-    compile 'com.vk:androidsdk:1.6.5'
+    compile 'com.vk:androidsdk:1.6.6'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.0.0'
     compile 'com.jakewharton:butterknife:7.0.1'
