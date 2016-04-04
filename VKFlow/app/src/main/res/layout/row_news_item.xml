@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content">
 
@@ -13,71 +14,113 @@
         android:layout_marginTop="@dimen/card_margin_vertical">
 
         <LinearLayout
+            android:id="@+id/llCardContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/llCardContent"
+            <RelativeLayout
+                android:id="@+id/rlNewsContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:paddingBottom="@dimen/card_content_padding"
                 android:paddingLeft="@dimen/card_content_padding"
                 android:paddingRight="@dimen/card_content_padding"
                 android:paddingTop="@dimen/card_content_padding">
 
-                <RelativeLayout
-                    android:id="@+id/rlNewsContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivPhoto"
+                    android:layout_width="@dimen/profile_photo_size"
+                    android:layout_height="@dimen/profile_photo_size"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignTop="@+id/tvFriendName"
+                    android:layout_marginBottom="@dimen/margin_standard"
+                    android:layout_marginEnd="@dimen/margin_standard"
+                    android:layout_marginRight="@dimen/margin_standard"
+                    android:src="@drawable/photo_anonym"/>
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/ivPhoto"
-                        android:layout_width="@dimen/profile_photo_size"
-                        android:layout_height="@dimen/profile_photo_size"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignTop="@+id/tvFriendName"
-                        android:layout_marginBottom="@dimen/margin_standard"
-                        android:layout_marginEnd="@dimen/margin_standard"
-                        android:layout_marginRight="@dimen/margin_standard"
-                        android:src="@drawable/photo_anonym"/>
+                <TextView
+                    android:id="@+id/tvFriendName"
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/ivPhoto"
+                    android:layout_toRightOf="@+id/ivPhoto"
+                    android:paddingTop="@dimen/mini_padding"
+                    android:text="@string/sample_text_friend_name"
+                    android:textIsSelectable="false"
+                    tools:text="@string/sample_text_friend_name"
+                    />
+
+                <TextView
+                    android:id="@+id/tvNewsDate"
+                    style="@style/TextAppearance.AppCompat.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/ivPhoto"
+                    android:layout_alignLeft="@+id/tvFriendName"
+                    android:layout_alignStart="@+id/tvFriendName"
+                    android:layout_below="@id/tvFriendName"
+                    android:text="@string/sample_text_date"
+                    tools:text="@string/sample_text_date"
+                    />
+
+                <TextView
+                    android:id="@+id/tvNewsContent"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/ivPhoto"
+                    android:layout_alignStart="@+id/ivPhoto"
+                    android:layout_below="@id/ivPhoto"
+                    android:text="@string/sample_text_news_content"
+                    tools:text="@string/sample_text_news_content"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/card_margin_vertical"
+                android:layout_marginRight="@dimen/card_margin_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/llComments"
+                    style="?borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    >
 
                     <TextView
-                        android:id="@+id/tvFriendName"
-                        style="@style/TextAppearance.AppCompat.Body2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@+id/ivPhoto"
-                        android:layout_toRightOf="@+id/ivPhoto"
-                        android:paddingTop="@dimen/mini_padding"
-                        android:textIsSelectable="false"
-                        />
+                        android:layout_marginEnd="@dimen/card_margin_horizontal"
+                        android:layout_marginRight="@dimen/card_margin_horizontal"
+                        android:duplicateParentState="true"
+                        android:text="@string/comments"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                        android:textColor="?colorPrimary"/>
 
                     <TextView
-                        android:id="@+id/tvNewsDate"
+                        android:id="@+id/tvCommentsCount"
                         style="@style/TextAppearance.AppCompat.Caption"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignBottom="@id/ivPhoto"
-                        android:layout_alignLeft="@+id/tvFriendName"
-                        android:layout_alignStart="@+id/tvFriendName"
-                        android:layout_below="@id/tvFriendName"
-                        android:text="@string/sample_text_date"
-                        />
+                        android:duplicateParentState="true"
+                        android:text="@string/sample_comments_count"/>
+                </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvNewsContent"
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignLeft="@+id/ivPhoto"
-                        android:layout_alignStart="@+id/ivPhoto"
-                        android:layout_below="@id/ivPhoto"
-                        android:text="@string/sample_text_news_content"/>
-                </RelativeLayout>
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
             </LinearLayout>
+
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
