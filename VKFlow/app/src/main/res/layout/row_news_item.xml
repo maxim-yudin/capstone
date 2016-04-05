@@ -42,20 +42,19 @@
 
                 <TextView
                     android:id="@+id/tvFriendName"
-                    style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/ivPhoto"
                     android:layout_toRightOf="@+id/ivPhoto"
                     android:paddingTop="@dimen/mini_padding"
                     android:text="@string/sample_text_friend_name"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textIsSelectable="false"
                     tools:text="@string/sample_text_friend_name"
                     />
 
                 <TextView
                     android:id="@+id/tvNewsDate"
-                    style="@style/TextAppearance.AppCompat.Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/ivPhoto"
@@ -63,18 +62,20 @@
                     android:layout_alignStart="@+id/tvFriendName"
                     android:layout_below="@id/tvFriendName"
                     android:text="@string/sample_text_date"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textColor="@color/gray"
                     tools:text="@string/sample_text_date"
                     />
 
                 <TextView
                     android:id="@+id/tvNewsContent"
-                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/ivPhoto"
                     android:layout_alignStart="@+id/ivPhoto"
                     android:layout_below="@id/ivPhoto"
                     android:text="@string/sample_text_news_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     tools:text="@string/sample_text_news_content"/>
 
             </RelativeLayout>
@@ -107,17 +108,44 @@
 
                     <TextView
                         android:id="@+id/tvCommentsCount"
-                        style="@style/TextAppearance.AppCompat.Caption"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:duplicateParentState="true"
-                        android:text="@string/sample_comments_count"/>
+                        android:text="@string/sample_comments_count"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textColor="@color/gray"/>
                 </LinearLayout>
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_standard"
+                    android:layout_marginRight="@dimen/margin_standard"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/ibLikes"
+                        style="?actionButtonStyle"
+                        android:layout_width="@dimen/action_button_width"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/sample_like_hint"
+                        android:src="@drawable/ic_favorite_24dp"
+                        android:tint="@color/gray"/>
+
+                    <TextView
+                        android:id="@+id/tvLikesCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sample_likes_count"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textColor="@color/gray"/>
+                </LinearLayout>
 
             </LinearLayout>
 
