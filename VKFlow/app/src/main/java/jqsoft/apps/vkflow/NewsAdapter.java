@@ -1,10 +1,15 @@
 package jqsoft.apps.vkflow;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -19,21 +24,25 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private final String[] newsSet;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.tvFriendName) TextView tvNewsTitle;
+        @Bind(R.id.tvFriendName) public TextView tvFriendName;
+        @Bind(R.id.ivFriendPhoto) public ImageView ivPhoto;
+        @Bind(R.id.tvNewsDate) public TextView tvNewsDate;
+        @Bind(R.id.tvNewsContent) public TextView tvNewsContent;
+        @Bind(R.id.llComments) public View llComments;
+        @Bind(R.id.tvCommentsCount) public TextView tvCommentsCount;
+        @Bind(R.id.ibLikes) public ImageButton ibLikes;
+        @Bind(R.id.tvLikesCount) public TextView tvLikesCount;
+        @Bind(R.id.ibShare) public ImageButton ibShare;
+        @Bind(R.id.tvShareCount) public TextView tvShareCount;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public TextView getNewsTitleView() {
-            return tvNewsTitle;
-        }
-
         public View getContentView() {
             return itemView;
         }
-
     }
 
     public NewsAdapter(String[] dataSet, OnNewsItemClickListener listener) {
@@ -50,14 +59,32 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        viewHolder.getContentView().setOnClickListener(new View.OnClickListener() {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
+        View.OnClickListener newsItemClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onNewsItemClick(newsSet[position]);
             }
+        };
+
+        viewHolder.getContentView().setOnClickListener(newsItemClickListener);
+        viewHolder.llComments.setOnClickListener(newsItemClickListener);
+
+        final Context context = viewHolder.getContentView().getContext();
+        viewHolder.ibLikes.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, context.getString(R.string.like_action, position), Toast.LENGTH_SHORT).show();
+            }
         });
-        viewHolder.getNewsTitleView().setText(newsSet[position]);
+        viewHolder.ibShare.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, context.getString(R.string.share_action, position), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewHolder.tvFriendName.setText(newsSet[position]);
     }
 
     @Override

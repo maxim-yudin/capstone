@@ -4,13 +4,18 @@
     <string name="sign_out">Sign out</string>
 
     <string name="comments">Comments</string>
+    <string name="like_description">Like</string>
+    <string name="share_description">Share</string>
+
+    <string name="like_action">Like a piece of news #%1$s</string>
+    <string name="share_action">Share a piece of news #%1$s</string>
 
     <string name="sample_text_date">10 hours ago</string>
     <string name="sample_text_news_content">Lorem ipsum donec porttitor, congue ultricies gravida ut risus odio auctor sodales ut. Nec quisque massa elementum sagittis urna nec ultricies gravida non malesuada donec — congue. Sed rutrum amet massa morbi magna: ipsum eget donec, molestie sagittis, arcu — eros sapien urna mattis arcu magna vulputate leo eget congue.</string>
     <string name="sample_text_friend_name">Hugh Laurie. Clone #%1$s</string>
     <string name="sample_comments_count">15</string>
-    <string name="sample_like_hint">Like</string>
     <string name="sample_likes_count">4</string>
+    <string name="sample_share_count">1</string>
 
     <!-- VK app for an access to VK API -->
     <integer name="com_vk_sdk_AppId">0<!-- Instead of 0 you need write right app id --></integer>

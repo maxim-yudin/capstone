@@ -29,7 +29,7 @@
                 android:paddingTop="@dimen/card_content_padding">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/ivPhoto"
+                    android:id="@+id/ivFriendPhoto"
                     android:layout_width="@dimen/profile_photo_size"
                     android:layout_height="@dimen/profile_photo_size"
                     android:layout_alignParentLeft="true"
@@ -44,8 +44,8 @@
                     android:id="@+id/tvFriendName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/ivPhoto"
-                    android:layout_toRightOf="@+id/ivPhoto"
+                    android:layout_toEndOf="@+id/ivFriendPhoto"
+                    android:layout_toRightOf="@+id/ivFriendPhoto"
                     android:paddingTop="@dimen/mini_padding"
                     android:text="@string/sample_text_friend_name"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
@@ -57,7 +57,7 @@
                     android:id="@+id/tvNewsDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/ivPhoto"
+                    android:layout_alignBottom="@id/ivFriendPhoto"
                     android:layout_alignLeft="@+id/tvFriendName"
                     android:layout_alignStart="@+id/tvFriendName"
                     android:layout_below="@id/tvFriendName"
@@ -71,9 +71,9 @@
                     android:id="@+id/tvNewsContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/ivPhoto"
-                    android:layout_alignStart="@+id/ivPhoto"
-                    android:layout_below="@id/ivPhoto"
+                    android:layout_alignLeft="@+id/ivFriendPhoto"
+                    android:layout_alignStart="@+id/ivFriendPhoto"
+                    android:layout_below="@id/ivFriendPhoto"
                     android:text="@string/sample_text_news_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     tools:text="@string/sample_text_news_content"/>
@@ -84,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/card_margin_vertical"
-                android:layout_marginRight="@dimen/card_margin_vertical"
+                android:layout_marginStart="@dimen/card_margin_vertical"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -99,8 +99,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/card_margin_horizontal"
-                        android:layout_marginRight="@dimen/card_margin_horizontal"
+                        android:layout_marginEnd="@dimen/view_margin"
+                        android:layout_marginRight="@dimen/view_margin"
                         android:duplicateParentState="true"
                         android:text="@string/comments"
                         android:textAppearance="@style/TextAppearance.AppCompat.Button"
@@ -119,7 +119,37 @@
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/view_margin"
+                    android:layout_marginLeft="@dimen/view_margin"
+                    android:layout_marginRight="@dimen/view_margin"
+                    android:layout_marginStart="@dimen/view_margin"
                     android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/view_margin"
+                    android:layout_marginRight="@dimen/view_margin"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/ibLikes"
+                        style="?actionButtonStyle"
+                        android:layout_width="@dimen/action_button_width"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/like_description"
+                        android:src="@drawable/ic_favorite_24dp"
+                        android:tint="@color/gray"/>
+
+                    <TextView
+                        android:id="@+id/tvLikesCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sample_likes_count"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textColor="@color/gray"/>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -130,19 +160,19 @@
                     android:orientation="horizontal">
 
                     <ImageButton
-                        android:id="@+id/ibLikes"
+                        android:id="@+id/ibShare"
                         style="?actionButtonStyle"
                         android:layout_width="@dimen/action_button_width"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/sample_like_hint"
-                        android:src="@drawable/ic_favorite_24dp"
+                        android:contentDescription="@string/share_description"
+                        android:src="@drawable/ic_share_24dp"
                         android:tint="@color/gray"/>
 
                     <TextView
-                        android:id="@+id/tvLikesCount"
+                        android:id="@+id/tvShareCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/sample_likes_count"
+                        android:text="@string/sample_share_count"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                         android:textColor="@color/gray"/>
                 </LinearLayout>
