@@ -32,8 +32,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         @Bind(R.id.tvCommentsCount) public TextView tvCommentsCount;
         @Bind(R.id.ibLikes) public ImageButton ibLikes;
         @Bind(R.id.tvLikesCount) public TextView tvLikesCount;
-        @Bind(R.id.ibShare) public ImageButton ibShare;
-        @Bind(R.id.tvShareCount) public TextView tvShareCount;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -75,12 +73,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, context.getString(R.string.like_action, position), Toast.LENGTH_SHORT).show();
-            }
-        });
-        viewHolder.ibShare.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, context.getString(R.string.share_action, position), Toast.LENGTH_SHORT).show();
             }
         });
 
