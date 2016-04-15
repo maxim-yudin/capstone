@@ -2,15 +2,24 @@ package jqsoft.apps.vkflow.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKRequest.VKRequestListener;
+import com.vk.sdk.api.VKResponse;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -109,6 +118,23 @@ public class MainFragment extends Fragment {
         rvNews.setAdapter(newsAdapter);
 
         return fragmentView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        new VKRequest("newsfeed.get", VKParameters.from(VKApiConst.FILTERS, "post")).executeWithListener(new VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                Log.i("VKFlow", response.responseString);
+            }
+
+            @Override
+            public void onError(VKError error) {
+
+            }
+        });
     }
 
     @Override
