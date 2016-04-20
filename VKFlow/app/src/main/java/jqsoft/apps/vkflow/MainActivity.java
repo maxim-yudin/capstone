@@ -17,6 +17,7 @@ import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdk.LoginState;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.model.VKApiPost;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -176,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     }
 
     @Override
-    public void onNewsItemSelected(String chosenNewsItem) {
+    public void onNewsItemSelected(VKApiPost chosenNewsItem) {
         Intent newsActivity = new Intent(this, NewsPieceActivity.class);
         startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
     }

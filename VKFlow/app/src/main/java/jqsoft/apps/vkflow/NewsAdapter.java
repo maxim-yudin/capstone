@@ -2,6 +2,7 @@ package jqsoft.apps.vkflow;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,17 +12,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vk.sdk.api.model.VKApiPost;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jqsoft.apps.vkflow.models.NewsFeed;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public interface OnNewsItemClickListener {
-        void onNewsItemClick(String newsItem);
+        void onNewsItemClick(VKApiPost newsItem);
     }
 
     private final OnNewsItemClickListener listener;
 
-    private final String[] newsSet;
+    private final NewsFeed newsFeed;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tvFriendName) public TextView tvFriendName;
@@ -43,8 +47,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         }
     }
 
-    public NewsAdapter(String[] dataSet, OnNewsItemClickListener listener) {
-        newsSet = dataSet;
+    public NewsAdapter(NewsFeed newsFeed, OnNewsItemClickListener listener) {
+        this.newsFeed = newsFeed;
         this.listener = listener;
     }
 
@@ -58,10 +62,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
+        final VKApiPost post = newsFeed.items.get(position);
+
         View.OnClickListener newsItemClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onNewsItemClick(newsSet[position]);
+                listener.onNewsItemClick(post);
             }
         };
 
@@ -76,11 +82,14 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             }
         });
 
-        viewHolder.tvFriendName.setText(newsSet[position]);
+        viewHolder.tvNewsContent.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
+        viewHolder.tvNewsContent.setText(post.text);
+        viewHolder.tvCommentsCount.setText(String.valueOf(post.comments_count));
+        viewHolder.tvLikesCount.setText(String.valueOf(post.likes_count));
     }
 
     @Override
     public int getItemCount() {
-        return newsSet.length;
+        return newsFeed.items.size();
     }
 }

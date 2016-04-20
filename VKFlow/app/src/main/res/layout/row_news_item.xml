@@ -74,6 +74,8 @@
                     android:layout_alignLeft="@+id/ivFriendPhoto"
                     android:layout_alignStart="@+id/ivFriendPhoto"
                     android:layout_below="@id/ivFriendPhoto"
+                    android:autoLink="all"
+                    android:maxLines="10"
                     android:text="@string/sample_text_news_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     tools:text="@string/sample_text_news_content"/>
