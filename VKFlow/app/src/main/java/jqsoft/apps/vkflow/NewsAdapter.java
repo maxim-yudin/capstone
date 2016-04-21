@@ -84,6 +84,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
         viewHolder.tvNewsContent.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
         viewHolder.tvNewsContent.setText(post.text);
+        viewHolder.tvNewsDate.setText(Utils.getDateFromUnitTime(post.date));
         viewHolder.tvCommentsCount.setText(String.valueOf(post.comments_count));
         viewHolder.tvLikesCount.setText(String.valueOf(post.likes_count));
     }
