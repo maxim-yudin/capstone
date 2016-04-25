@@ -17,11 +17,11 @@ import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdk.LoginState;
 import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.model.VKApiPost;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jqsoft.apps.vkflow.fragments.MainFragment;
+import jqsoft.apps.vkflow.models.NewsPost;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     }
 
     @Override
-    public void onNewsItemSelected(VKApiPost chosenNewsItem) {
+    public void onNewsPostSelected(NewsPost chosenNewsPost) {
         Intent newsActivity = new Intent(this, NewsPieceActivity.class);
         startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
     }

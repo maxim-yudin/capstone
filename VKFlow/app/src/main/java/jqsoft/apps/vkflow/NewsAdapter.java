@@ -2,7 +2,6 @@ package jqsoft.apps.vkflow;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,20 +11,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.vk.sdk.api.model.VKApiPost;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import jqsoft.apps.vkflow.models.NewsFeed;
+import jqsoft.apps.vkflow.models.NewsPost;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
-    public interface OnNewsItemClickListener {
-        void onNewsItemClick(VKApiPost newsItem);
+    public interface OnNewsPostClickListener {
+        void onNewsPostClick(NewsPost newsItem);
     }
 
-    private final OnNewsItemClickListener listener;
+    private final OnNewsPostClickListener listener;
 
-    private final NewsFeed newsFeed;
+    private final ArrayList<NewsPost> newsFeed;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tvFriendName) public TextView tvFriendName;
@@ -47,7 +46,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         }
     }
 
-    public NewsAdapter(NewsFeed newsFeed, OnNewsItemClickListener listener) {
+    public NewsAdapter(ArrayList<NewsPost> newsFeed, OnNewsPostClickListener listener) {
         this.newsFeed = newsFeed;
         this.listener = listener;
     }
@@ -61,36 +60,36 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
-        final VKApiPost post = newsFeed.items.get(position);
+    public void onBindViewHolder(final ViewHolder viewHolder, int position) {
+        final NewsPost post = newsFeed.get(position);
 
-        View.OnClickListener newsItemClickListener = new View.OnClickListener() {
+        View.OnClickListener newsPostClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onNewsItemClick(post);
+                listener.onNewsPostClick(post);
             }
         };
 
-        viewHolder.getContentView().setOnClickListener(newsItemClickListener);
-        viewHolder.llComments.setOnClickListener(newsItemClickListener);
+        viewHolder.getContentView().setOnClickListener(newsPostClickListener);
+        viewHolder.llComments.setOnClickListener(newsPostClickListener);
 
         final Context context = viewHolder.getContentView().getContext();
         viewHolder.ibLikes.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, context.getString(R.string.like_action, position), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.like_action, viewHolder.getAdapterPosition()),
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
-        viewHolder.tvNewsContent.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
         viewHolder.tvNewsContent.setText(post.text);
-        viewHolder.tvNewsDate.setText(Utils.getDateFromUnitTime(post.date));
-        viewHolder.tvCommentsCount.setText(String.valueOf(post.comments_count));
-        viewHolder.tvLikesCount.setText(String.valueOf(post.likes_count));
+        viewHolder.tvNewsDate.setText(post.date);
+        viewHolder.tvCommentsCount.setText(post.commentsCount);
+        viewHolder.tvLikesCount.setText(post.likesCount);
     }
 
     @Override
     public int getItemCount() {
-        return newsFeed.items.size();
+        return newsFeed.size();
     }
 }

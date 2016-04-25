@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,15 +28,16 @@ import com.vk.sdk.api.model.VKList;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import jqsoft.apps.vkflow.NewsAdapter;
-import jqsoft.apps.vkflow.NewsAdapter.OnNewsItemClickListener;
+import jqsoft.apps.vkflow.NewsAdapter.OnNewsPostClickListener;
 import jqsoft.apps.vkflow.R;
 import jqsoft.apps.vkflow.Utils;
-import jqsoft.apps.vkflow.models.NewsFeed;
+import jqsoft.apps.vkflow.models.NewsPost;
 
 public class MainFragment extends Fragment {
     /**
@@ -50,14 +52,14 @@ public class MainFragment extends Fragment {
 
     private static final String NEWS_FEED = "news_feed";
 
-    private NewsFeed newsFeed;
+    private ArrayList<NewsPost> newsFeed;
 
     /**
-     * A callback interface that allows main activity to be notified of news item
+     * A callback interface that allows main activity to be notified of news post
      * selection and signing out.
      */
     public interface CallbackActions {
-        void onNewsItemSelected(VKApiPost chosenNewsItem);
+        void onNewsPostSelected(NewsPost chosenNewsItem);
 
         void onSignOut();
     }
@@ -68,7 +70,7 @@ public class MainFragment extends Fragment {
      */
     private static final CallbackActions dummyCallbackActions = new CallbackActions() {
         @Override
-        public void onNewsItemSelected(VKApiPost chosenNewsItem) {
+        public void onNewsPostSelected(NewsPost chosenNewsPost) {
         }
 
         @Override
@@ -101,7 +103,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (newsFeed != null) {
-            outState.putParcelable(NEWS_FEED, newsFeed);
+            outState.putParcelableArrayList(NEWS_FEED, newsFeed);
         }
         super.onSaveInstanceState(outState);
     }
@@ -123,10 +125,10 @@ public class MainFragment extends Fragment {
         return fragmentView;
     }
 
-    final OnNewsItemClickListener onNewsItemClickListener = new OnNewsItemClickListener() {
+    final OnNewsPostClickListener onNewsPostClickListener = new OnNewsPostClickListener() {
         @Override
-        public void onNewsItemClick(VKApiPost newsItem) {
-            callbackActions.onNewsItemSelected(newsItem);
+        public void onNewsPostClick(NewsPost newsItem) {
+            callbackActions.onNewsPostSelected(newsItem);
         }
     };
 
@@ -137,13 +139,13 @@ public class MainFragment extends Fragment {
         if (savedInstanceState == null || !savedInstanceState.containsKey(NEWS_FEED)) {
             getNews();
         } else {
-            newsFeed = savedInstanceState.getParcelable(NEWS_FEED);
+            newsFeed = savedInstanceState.getParcelableArrayList(NEWS_FEED);
             fillAdapter();
         }
     }
 
     private void fillAdapter() {
-        rvNews.setAdapter(new NewsAdapter(newsFeed, onNewsItemClickListener));
+        rvNews.setAdapter(new NewsAdapter(newsFeed, onNewsPostClickListener));
         pbLoading.setVisibility(View.GONE);
         rvNews.setVisibility(View.VISIBLE);
     }
@@ -152,7 +154,7 @@ public class MainFragment extends Fragment {
         new GetNewsListTask().execute();
     }
 
-    private class GetNewsListTask extends AsyncTask<Void, Void, NewsFeed> {
+    private class GetNewsListTask extends AsyncTask<Void, Void, ArrayList<NewsPost>> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -162,7 +164,7 @@ public class MainFragment extends Fragment {
             rvNews.setVisibility(View.GONE);
         }
 
-        protected NewsFeed doInBackground(Void... params) {
+        protected ArrayList<NewsPost> doInBackground(Void... params) {
             try {
                 if (!Utils.isInternetConnected(getContext())) {
                     return null;
@@ -172,10 +174,34 @@ public class MainFragment extends Fragment {
                 getNewsFeed.start(Executors.newSingleThreadExecutor());
                 JSONObject newsFeedJson = getNewsFeed.getResponseJson().getJSONObject("response");
 
-                NewsFeed newsFeed = new NewsFeed();
-                newsFeed.items = new VKList<>(newsFeedJson.getJSONArray("items"), VKApiPost.class);
-                newsFeed.profiles = new VKList<>(newsFeedJson.getJSONArray("profiles"), VKApiUser.class);
-                newsFeed.groups = new VKList<>(newsFeedJson.getJSONArray("groups"), VKApiCommunity.class);
+                ArrayList<NewsPost> newsFeed = new ArrayList<>();
+
+                VKList<VKApiPost> postList = new VKList<>(newsFeedJson.getJSONArray("items"), VKApiPost.class);
+                VKList<VKApiUser> profiles = new VKList<>(newsFeedJson.getJSONArray("profiles"), VKApiUser.class);
+                VKList<VKApiCommunity> groups = new VKList<>(newsFeedJson.getJSONArray("groups"), VKApiCommunity.class);
+
+                NewsPost newsPost;
+                for (VKApiPost post : postList) {
+                    if (!TextUtils.isEmpty(post.text)) {
+                        newsPost = new NewsPost();
+                        newsPost.text = post.text;
+                        newsPost.date = Utils.getDateFromUnitTime(post.date);
+                        newsPost.canPostComment = post.can_post_comment;
+                        newsPost.commentsCount = String.valueOf(post.comments_count);
+                        newsPost.canLike = post.can_like;
+                        newsPost.likesCount = String.valueOf(post.likes_count);
+                        newsPost.isUserLike = post.user_likes;
+                        newsPost.postId = String.valueOf(post.id);
+
+                        if (post.from_id >= 0) {
+                            // it's an user
+                        } else {
+                            // it's a community
+                        }
+
+                        newsFeed.add(newsPost);
+                    }
+                }
                 return newsFeed;
             } catch (Exception e) {
                 // if some errors occurs, e.g. no internet
@@ -183,7 +209,7 @@ public class MainFragment extends Fragment {
             }
         }
 
-        protected void onPostExecute(NewsFeed result) {
+        protected void onPostExecute(ArrayList<NewsPost> result) {
             if (getActivity() == null) {
                 return;
             }
