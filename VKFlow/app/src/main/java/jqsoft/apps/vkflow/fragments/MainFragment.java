@@ -185,7 +185,7 @@ public class MainFragment extends Fragment {
                     if (!TextUtils.isEmpty(post.text)) {
                         newsPost = new NewsPost();
                         newsPost.text = post.text;
-                        newsPost.date = Utils.getDateFromUnitTime(post.date);
+                        newsPost.date = post.date;
                         newsPost.canPostComment = post.can_post_comment;
                         newsPost.commentsCount = String.valueOf(post.comments_count);
                         newsPost.canLike = post.can_like;

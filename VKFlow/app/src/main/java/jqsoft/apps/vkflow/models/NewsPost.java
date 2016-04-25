@@ -3,6 +3,8 @@ package jqsoft.apps.vkflow.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import jqsoft.apps.vkflow.Utils;
+
 public class NewsPost implements Parcelable {
     /**
      * Post ID on the wall, positive number
@@ -10,9 +12,9 @@ public class NewsPost implements Parcelable {
     public String postId;
 
     /**
-     * Date the post was added.
+     * Date (unix time) the post was added.
      */
-    public String date;
+    public long date;
 
     /**
      * Text of the post.
@@ -54,12 +56,16 @@ public class NewsPost implements Parcelable {
      */
     public String userName;
 
+    public String getPostDate() {
+        return Utils.getDateFromUnitTime(date);
+    }
+
     public NewsPost() {
     }
 
     protected NewsPost(Parcel in) {
         postId = in.readString();
-        date = in.readString();
+        date = in.readLong();
         text = in.readString();
         commentsCount = in.readString();
         canPostComment = in.readByte() != 0x00;
@@ -78,7 +84,7 @@ public class NewsPost implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(postId);
-        dest.writeString(date);
+        dest.writeLong(date);
         dest.writeString(text);
         dest.writeString(commentsCount);
         dest.writeByte((byte) (canPostComment ? 0x01 : 0x00));

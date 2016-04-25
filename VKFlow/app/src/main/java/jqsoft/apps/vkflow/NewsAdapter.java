@@ -83,7 +83,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         });
 
         viewHolder.tvNewsContent.setText(post.text);
-        viewHolder.tvNewsDate.setText(post.date);
+        viewHolder.tvNewsDate.setText(post.getPostDate());
         viewHolder.tvCommentsCount.setText(post.commentsCount);
         viewHolder.tvLikesCount.setText(post.likesCount);
     }
