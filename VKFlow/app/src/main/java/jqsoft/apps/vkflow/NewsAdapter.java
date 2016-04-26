@@ -8,8 +8,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -28,7 +32,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tvFriendName) public TextView tvFriendName;
-        @Bind(R.id.ivFriendPhoto) public ImageView ivPhoto;
+        @Bind(R.id.ivFriendPhoto) public ImageView ivFriendPhoto;
+        @Bind(R.id.pbFriendPhotoLoading) public ProgressBar pbFriendPhotoLoading;
         @Bind(R.id.tvNewsDate) public TextView tvNewsDate;
         @Bind(R.id.tvNewsContent) public TextView tvNewsContent;
         @Bind(R.id.llComments) public View llComments;
@@ -82,10 +87,24 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             }
         });
 
+        viewHolder.tvFriendName.setText(post.userName);
         viewHolder.tvNewsContent.setText(post.text);
         viewHolder.tvNewsDate.setText(post.getPostDate());
-        viewHolder.tvCommentsCount.setText(post.commentsCount);
-        viewHolder.tvLikesCount.setText(post.likesCount);
+        viewHolder.tvCommentsCount.setText(post.comments_count);
+        viewHolder.tvLikesCount.setText(post.likes_count);
+
+        Picasso.with(context).load(post.userPhotoUrl).into(viewHolder.ivFriendPhoto, new Callback() {
+            @Override
+            public void onSuccess() {
+                viewHolder.pbFriendPhotoLoading.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+                viewHolder.pbFriendPhotoLoading.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     @Override

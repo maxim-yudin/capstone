@@ -3,16 +3,28 @@ package jqsoft.apps.vkflow.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.vk.sdk.api.model.Identifiable;
+import com.vk.sdk.api.model.VKApiModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import jqsoft.apps.vkflow.ParseUtils;
 import jqsoft.apps.vkflow.Utils;
 
-public class NewsPost implements Parcelable {
+public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
     /**
      * Post ID on the wall, positive number
      */
-    public String postId;
+    public int id;
 
     /**
-     * Date (unix time) the post was added.
+     * ID of the user who posted.
+     */
+    public int source_id;
+
+    /**
+     * Date (in Unix time) the post was added.
      */
     public long date;
 
@@ -24,27 +36,27 @@ public class NewsPost implements Parcelable {
     /**
      * Number of comments.
      */
-    public String commentsCount;
+    public String comments_count;
 
     /**
      * Whether the current user can leave comments to the post (false — cannot, true — can)
      */
-    public boolean canPostComment;
+    public boolean can_post_comment;
 
     /**
      * Number of users who liked the post.
      */
-    public String likesCount;
+    public String likes_count;
 
     /**
      * Whether the user liked the post (false — not liked, true — liked)
      */
-    public boolean isUserLike;
+    public boolean user_likes;
 
     /**
      * Whether the user can like the post (false — cannot, true — can).
      */
-    public boolean canLike;
+    public boolean can_like;
 
     /**
      * Avatar photo url
@@ -63,15 +75,42 @@ public class NewsPost implements Parcelable {
     public NewsPost() {
     }
 
+    public NewsPost(JSONObject from) throws JSONException {
+        parse(from);
+    }
+
+    /**
+     * Fills a Post instance from JSONObject.
+     */
+    public NewsPost parse(JSONObject source) throws JSONException {
+        id = source.optInt("post_id");
+        source_id = source.optInt("source_id");
+        date = source.optLong("date");
+        text = source.optString("text");
+        JSONObject comments = source.optJSONObject("comments");
+        if (comments != null) {
+            comments_count = String.valueOf(comments.optInt("count"));
+            can_post_comment = ParseUtils.parseBoolean(comments, "can_post");
+        }
+        JSONObject likes = source.optJSONObject("likes");
+        if (likes != null) {
+            likes_count = String.valueOf(likes.optInt("count"));
+            user_likes = ParseUtils.parseBoolean(likes, "user_likes");
+            can_like = ParseUtils.parseBoolean(likes, "can_like");
+        }
+        return this;
+    }
+
     protected NewsPost(Parcel in) {
-        postId = in.readString();
+        id = in.readInt();
+        source_id = in.readInt();
         date = in.readLong();
         text = in.readString();
-        commentsCount = in.readString();
-        canPostComment = in.readByte() != 0x00;
-        likesCount = in.readString();
-        isUserLike = in.readByte() != 0x00;
-        canLike = in.readByte() != 0x00;
+        comments_count = in.readString();
+        can_post_comment = in.readByte() != 0x00;
+        likes_count = in.readString();
+        user_likes = in.readByte() != 0x00;
+        can_like = in.readByte() != 0x00;
         userPhotoUrl = in.readString();
         userName = in.readString();
     }
@@ -83,14 +122,15 @@ public class NewsPost implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(postId);
+        dest.writeInt(id);
+        dest.writeInt(source_id);
         dest.writeLong(date);
         dest.writeString(text);
-        dest.writeString(commentsCount);
-        dest.writeByte((byte) (canPostComment ? 0x01 : 0x00));
-        dest.writeString(likesCount);
-        dest.writeByte((byte) (isUserLike ? 0x01 : 0x00));
-        dest.writeByte((byte) (canLike ? 0x01 : 0x00));
+        dest.writeString(comments_count);
+        dest.writeByte((byte) (can_post_comment ? 0x01 : 0x00));
+        dest.writeString(likes_count);
+        dest.writeByte((byte) (user_likes ? 0x01 : 0x00));
+        dest.writeByte((byte) (can_like ? 0x01 : 0x00));
         dest.writeString(userPhotoUrl);
         dest.writeString(userName);
     }
@@ -106,4 +146,9 @@ public class NewsPost implements Parcelable {
             return new NewsPost[size];
         }
     };
+
+    @Override
+    public int getId() {
+        return id;
+    }
 }

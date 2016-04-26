@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             VKScope.WALL, VKScope.FRIENDS
     };
     private boolean isResumed = false;
+    private boolean isSavedInstanceState = false;
 
     private InterstitialAd interstitialAd;
 
@@ -47,30 +48,34 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        VKSdk.wakeUpSession(this, new VKCallback<LoginState>() {
-            @Override
-            public void onResult(VKSdk.LoginState res) {
-                if (isResumed) {
-                    switch (res) {
-                        case LoggedOut:
-                            showLoginForm();
-                            break;
-                        case LoggedIn:
-                            showMainForm();
-                            break;
-                        case Pending:
-                            break;
-                        case Unknown:
-                            break;
+        isSavedInstanceState = (savedInstanceState != null);
+
+        if (savedInstanceState == null) {
+            VKSdk.wakeUpSession(this, new VKCallback<LoginState>() {
+                @Override
+                public void onResult(VKSdk.LoginState res) {
+                    if (isResumed) {
+                        switch (res) {
+                            case LoggedOut:
+                                showLoginForm();
+                                break;
+                            case LoggedIn:
+                                showMainForm();
+                                break;
+                            case Pending:
+                                break;
+                            case Unknown:
+                                break;
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onError(VKError error) {
+                @Override
+                public void onError(VKError error) {
 
-            }
-        });
+                }
+            });
+        }
 
         interstitialAd = new InterstitialAd(this);
         interstitialAd.setAdUnitId(getString(R.string.test_interstitial_ad_unit_id));
@@ -95,12 +100,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     @Override
     protected void onResume() {
         super.onResume();
+
         isResumed = true;
         if (VKSdk.isLoggedIn()) {
             showMainForm();
         } else {
             showLoginForm();
         }
+        isSavedInstanceState = false;
 
         if (!interstitialAd.isLoaded()) {
             requestNewInterstitial();
@@ -139,17 +146,21 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     }
 
     private void showMainForm() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, MainFragment.newInstance())
-                .commitAllowingStateLoss();
+        if (!isSavedInstanceState) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, MainFragment.newInstance())
+                    .commitAllowingStateLoss();
+        }
     }
 
     private void showLoginForm() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, LoginFragment.newInstance())
-                .commitAllowingStateLoss();
+        if (!isSavedInstanceState) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, LoginFragment.newInstance())
+                    .commitAllowingStateLoss();
+        }
     }
 
     public static class LoginFragment extends Fragment {

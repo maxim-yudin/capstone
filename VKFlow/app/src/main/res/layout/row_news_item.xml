@@ -28,8 +28,8 @@
                 android:paddingRight="@dimen/card_content_padding"
                 android:paddingTop="@dimen/card_content_padding">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/ivFriendPhoto"
+                <FrameLayout
+                    android:id="@+id/flFriendPhoto"
                     android:layout_width="@dimen/profile_photo_size"
                     android:layout_height="@dimen/profile_photo_size"
                     android:layout_alignParentLeft="true"
@@ -37,15 +37,28 @@
                     android:layout_alignTop="@+id/tvFriendName"
                     android:layout_marginBottom="@dimen/margin_standard"
                     android:layout_marginEnd="@dimen/margin_standard"
-                    android:layout_marginRight="@dimen/margin_standard"
-                    android:src="@drawable/photo_anonym"/>
+                    android:layout_marginRight="@dimen/margin_standard">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/ivFriendPhoto"
+                        android:layout_width="@dimen/profile_photo_size"
+                        android:layout_height="@dimen/profile_photo_size"/>
+
+                    <ProgressBar
+                        android:id="@+id/pbFriendPhotoLoading"
+                        style="?android:attr/progressBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/tvFriendName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/ivFriendPhoto"
-                    android:layout_toRightOf="@+id/ivFriendPhoto"
+                    android:layout_toEndOf="@+id/flFriendPhoto"
+                    android:layout_toRightOf="@+id/flFriendPhoto"
                     android:paddingTop="@dimen/mini_padding"
                     android:text="@string/sample_text_friend_name"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
@@ -57,7 +70,7 @@
                     android:id="@+id/tvNewsDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/ivFriendPhoto"
+                    android:layout_alignBottom="@id/flFriendPhoto"
                     android:layout_alignLeft="@+id/tvFriendName"
                     android:layout_alignStart="@+id/tvFriendName"
                     android:layout_below="@id/tvFriendName"
@@ -71,9 +84,9 @@
                     android:id="@+id/tvNewsContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/ivFriendPhoto"
-                    android:layout_alignStart="@+id/ivFriendPhoto"
-                    android:layout_below="@id/ivFriendPhoto"
+                    android:layout_alignLeft="@+id/flFriendPhoto"
+                    android:layout_alignStart="@+id/flFriendPhoto"
+                    android:layout_below="@id/flFriendPhoto"
                     android:autoLink="all"
                     android:maxLines="10"
                     android:text="@string/sample_text_news_content"

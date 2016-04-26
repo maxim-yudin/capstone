@@ -22,7 +22,6 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.httpClient.VKJsonOperation;
 import com.vk.sdk.api.model.VKApiCommunity;
-import com.vk.sdk.api.model.VKApiPost;
 import com.vk.sdk.api.model.VKApiUser;
 import com.vk.sdk.api.model.VKList;
 
@@ -176,30 +175,38 @@ public class MainFragment extends Fragment {
 
                 ArrayList<NewsPost> newsFeed = new ArrayList<>();
 
-                VKList<VKApiPost> postList = new VKList<>(newsFeedJson.getJSONArray("items"), VKApiPost.class);
+                VKList<NewsPost> postList = new VKList<>(newsFeedJson.getJSONArray("items"), NewsPost.class);
                 VKList<VKApiUser> profiles = new VKList<>(newsFeedJson.getJSONArray("profiles"), VKApiUser.class);
                 VKList<VKApiCommunity> groups = new VKList<>(newsFeedJson.getJSONArray("groups"), VKApiCommunity.class);
 
-                NewsPost newsPost;
-                for (VKApiPost post : postList) {
-                    if (!TextUtils.isEmpty(post.text)) {
-                        newsPost = new NewsPost();
-                        newsPost.text = post.text;
-                        newsPost.date = post.date;
-                        newsPost.canPostComment = post.can_post_comment;
-                        newsPost.commentsCount = String.valueOf(post.comments_count);
-                        newsPost.canLike = post.can_like;
-                        newsPost.likesCount = String.valueOf(post.likes_count);
-                        newsPost.isUserLike = post.user_likes;
-                        newsPost.postId = String.valueOf(post.id);
+                VKApiUser user;
+                VKApiCommunity group;
 
-                        if (post.from_id >= 0) {
+                for (NewsPost post : postList) {
+                    if (!TextUtils.isEmpty(post.text)) {
+                        StringBuilder sbName = new StringBuilder();
+                        String photoUrl;
+                        if (post.source_id >= 0) {
                             // it's an user
+                            user = profiles.getById(post.source_id);
+                            if (user.first_name != null) {
+                                sbName.append(user.first_name);
+                                sbName.append(" ");
+                            }
+                            if (user.last_name != null) {
+                                sbName.append(user.last_name);
+                            }
+                            photoUrl = user.photo_100;
                         } else {
                             // it's a community
+                            group = groups.getById(Math.abs(post.source_id));
+                            sbName.append(group.name);
+                            photoUrl = group.photo_100;
                         }
+                        post.userName = sbName.toString();
+                        post.userPhotoUrl = photoUrl;
 
-                        newsFeed.add(newsPost);
+                        newsFeed.add(post);
                     }
                 }
                 return newsFeed;
