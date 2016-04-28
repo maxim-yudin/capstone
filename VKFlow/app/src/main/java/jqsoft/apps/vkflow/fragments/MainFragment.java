@@ -1,13 +1,15 @@
 package jqsoft.apps.vkflow.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,25 +19,15 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.httpClient.VKJsonOperation;
-import com.vk.sdk.api.model.VKApiCommunity;
-import com.vk.sdk.api.model.VKApiUser;
-import com.vk.sdk.api.model.VKList;
-
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jqsoft.apps.vkflow.Constants;
 import jqsoft.apps.vkflow.NewsAdapter;
 import jqsoft.apps.vkflow.NewsAdapter.OnNewsPostClickListener;
 import jqsoft.apps.vkflow.R;
-import jqsoft.apps.vkflow.Utils;
+import jqsoft.apps.vkflow.VkService;
 import jqsoft.apps.vkflow.models.NewsPost;
 
 public class MainFragment extends Fragment {
@@ -135,6 +127,12 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        IntentFilter newsfeedResultIntentFilter = new IntentFilter(
+                Constants.BROADCAST_ACTION_NEWSFEED_RESULT);
+
+        NewsFeedReceiver newsFeedReceiver = new NewsFeedReceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(newsFeedReceiver, newsfeedResultIntentFilter);
+
         if (savedInstanceState == null || !savedInstanceState.containsKey(NEWS_FEED)) {
             getNews();
         } else {
@@ -150,88 +148,13 @@ public class MainFragment extends Fragment {
     }
 
     private void getNews() {
-        new GetNewsListTask().execute();
-    }
-
-    private class GetNewsListTask extends AsyncTask<Void, Void, ArrayList<NewsPost>> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pbLoading.setVisibility(View.VISIBLE);
-            emptyView.setText(R.string.no_news);
-            emptyView.setVisibility(View.GONE);
-            rvNews.setVisibility(View.GONE);
-        }
-
-        protected ArrayList<NewsPost> doInBackground(Void... params) {
-            try {
-                if (!Utils.isInternetConnected(getContext())) {
-                    return null;
-                }
-
-                VKJsonOperation getNewsFeed = new VKJsonOperation(new VKRequest("newsfeed.get", VKParameters.from(VKApiConst.FILTERS, "post")).getPreparedRequest());
-                getNewsFeed.start(Executors.newSingleThreadExecutor());
-                JSONObject newsFeedJson = getNewsFeed.getResponseJson().getJSONObject("response");
-
-                ArrayList<NewsPost> newsFeed = new ArrayList<>();
-
-                VKList<NewsPost> postList = new VKList<>(newsFeedJson.getJSONArray("items"), NewsPost.class);
-                VKList<VKApiUser> profiles = new VKList<>(newsFeedJson.getJSONArray("profiles"), VKApiUser.class);
-                VKList<VKApiCommunity> groups = new VKList<>(newsFeedJson.getJSONArray("groups"), VKApiCommunity.class);
-
-                VKApiUser user;
-                VKApiCommunity group;
-
-                for (NewsPost post : postList) {
-                    if (!TextUtils.isEmpty(post.text)) {
-                        StringBuilder sbName = new StringBuilder();
-                        String photoUrl;
-                        if (post.source_id >= 0) {
-                            // it's an user
-                            user = profiles.getById(post.source_id);
-                            if (user.first_name != null) {
-                                sbName.append(user.first_name);
-                                sbName.append(" ");
-                            }
-                            if (user.last_name != null) {
-                                sbName.append(user.last_name);
-                            }
-                            photoUrl = user.photo_100;
-                        } else {
-                            // it's a community
-                            group = groups.getById(Math.abs(post.source_id));
-                            sbName.append(group.name);
-                            photoUrl = group.photo_100;
-                        }
-                        post.userName = sbName.toString();
-                        post.userPhotoUrl = photoUrl;
-
-                        newsFeed.add(post);
-                    }
-                }
-                return newsFeed;
-            } catch (Exception e) {
-                // if some errors occurs, e.g. no internet
-                return null;
-            }
-        }
-
-        protected void onPostExecute(ArrayList<NewsPost> result) {
-            if (getActivity() == null) {
-                return;
-            }
-
-            newsFeed = result;
-
-            if (result == null) {
-                pbLoading.setVisibility(View.GONE);
-                rvNews.setVisibility(View.GONE);
-                emptyView.setVisibility(View.VISIBLE);
-                emptyView.setText(R.string.some_error);
-                return;
-            }
-            fillAdapter();
-        }
+        pbLoading.setVisibility(View.VISIBLE);
+        emptyView.setText(R.string.no_news);
+        emptyView.setVisibility(View.GONE);
+        rvNews.setVisibility(View.GONE);
+        Intent mServiceIntent = new Intent(getActivity(), VkService.class);
+        mServiceIntent.setAction(VkService.ACTION_FETCH_NEWSFEED);
+        getActivity().startService(mServiceIntent);
     }
 
     @Override
@@ -253,5 +176,28 @@ public class MainFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public class NewsFeedReceiver extends BroadcastReceiver {
+        public NewsFeedReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (getActivity() == null) {
+                return;
+            }
+
+            newsFeed = intent.getParcelableArrayListExtra(Constants.NEWSFEED_LIST);
+
+            if (newsFeed == null) {
+                pbLoading.setVisibility(View.GONE);
+                rvNews.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+                emptyView.setText(R.string.some_error);
+                return;
+            }
+            fillAdapter();
+        }
     }
 }
