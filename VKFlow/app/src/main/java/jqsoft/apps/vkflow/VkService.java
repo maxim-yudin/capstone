@@ -85,6 +85,11 @@ public class VkService extends IntentService {
             } catch (Exception e) {
                 newsFeed = null;
             }
+            // Save newsfeed in our db, we will use them when we have no internet
+            NewsfeedStorage.updateNewsfeed(getApplicationContext(), newsFeed);
+        } else {
+            // When we have no internet, we use offline newsfeed
+            newsFeed = NewsfeedStorage.getNewsfeed(getApplicationContext());
         }
 
         Intent newsfeedResultIntent = new Intent(Constants.BROADCAST_ACTION_NEWSFEED_RESULT);

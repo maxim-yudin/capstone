@@ -1,8 +1,12 @@
 package jqsoft.apps.vkflow.models;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.tjeannin.provigen.ProviGenBaseContract;
+import com.tjeannin.provigen.annotation.Column;
+import com.tjeannin.provigen.annotation.ContentUri;
 import com.vk.sdk.api.model.Identifiable;
 import com.vk.sdk.api.model.VKApiModel;
 
@@ -11,6 +15,7 @@ import org.json.JSONObject;
 
 import jqsoft.apps.vkflow.ParseUtils;
 import jqsoft.apps.vkflow.Utils;
+import jqsoft.apps.vkflow.providers.NewsDbProvider;
 
 public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
     /**
@@ -103,7 +108,6 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
 
     protected NewsPost(Parcel in) {
         id = in.readInt();
-        source_id = in.readInt();
         date = in.readLong();
         text = in.readString();
         comments_count = in.readString();
@@ -123,7 +127,6 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeInt(source_id);
         dest.writeLong(date);
         dest.writeString(text);
         dest.writeString(comments_count);
@@ -150,5 +153,43 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
     @Override
     public int getId() {
         return id;
+    }
+
+    /**
+     * Contract for DB and content provider
+     */
+    public interface Contract extends ProviGenBaseContract {
+        @Column(Column.Type.INTEGER)
+        String POST_ID = "id";
+
+        @Column(Column.Type.INTEGER)
+        String DATE = "date";
+
+        @Column(Column.Type.TEXT)
+        String TEXT = "text";
+
+        @Column(Column.Type.TEXT)
+        String COMMENTS_COUNT = "comments_count";
+
+        @Column(Column.Type.INTEGER)
+        String CAN_POST_COMMENT = "can_post_comment";
+
+        @Column(Column.Type.TEXT)
+        String LIKES_COUNT = "likes_count";
+
+        @Column(Column.Type.INTEGER)
+        String USER_LIKES = "user_likes";
+
+        @Column(Column.Type.INTEGER)
+        String CAN_LIKE = "can_like";
+
+        @Column(Column.Type.TEXT)
+        String USER_PHOTO_URL = "userPhotoUrl";
+
+        @Column(Column.Type.TEXT)
+        String USER_NAME = "userName";
+
+        @ContentUri
+        Uri CONTENT_URI = NewsDbProvider.getContentUri("newsfeed");
     }
 }
