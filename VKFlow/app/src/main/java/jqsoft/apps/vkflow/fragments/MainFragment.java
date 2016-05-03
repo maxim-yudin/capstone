@@ -4,9 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,18 +22,17 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import jqsoft.apps.vkflow.Constants;
 import jqsoft.apps.vkflow.NewsAdapter;
 import jqsoft.apps.vkflow.NewsAdapter.OnNewsPostClickListener;
+import jqsoft.apps.vkflow.NewsfeedLoader;
 import jqsoft.apps.vkflow.R;
+import jqsoft.apps.vkflow.Utils;
 import jqsoft.apps.vkflow.VkService;
-import jqsoft.apps.vkflow.models.NewsPost;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * The fragment's current callback object, which is notified of news item
      * clicks and signing out.
@@ -41,16 +43,27 @@ public class MainFragment extends Fragment {
     @Bind(android.R.id.empty) TextView emptyView;
     @Bind(R.id.pbLoading) ProgressBar pbLoading;
 
-    private static final String NEWS_FEED = "news_feed";
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new NewsfeedLoader(getActivity());
+    }
 
-    private ArrayList<NewsPost> newsFeed;
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        rvNews.setAdapter(new NewsAdapter(cursor, onNewsPostClickListener));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        rvNews.setAdapter(null);
+    }
 
     /**
      * A callback interface that allows main activity to be notified of news post
      * selection and signing out.
      */
     public interface CallbackActions {
-        void onNewsPostSelected(NewsPost chosenNewsItem);
+        void onNewsPostSelected(int chosenNewsPostId);
 
         void onSignOut();
     }
@@ -61,7 +74,7 @@ public class MainFragment extends Fragment {
      */
     private static final CallbackActions dummyCallbackActions = new CallbackActions() {
         @Override
-        public void onNewsPostSelected(NewsPost chosenNewsPost) {
+        public void onNewsPostSelected(int chosenNewsPostId) {
         }
 
         @Override
@@ -92,14 +105,6 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (newsFeed != null) {
-            outState.putParcelableArrayList(NEWS_FEED, newsFeed);
-        }
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -118,8 +123,8 @@ public class MainFragment extends Fragment {
 
     final OnNewsPostClickListener onNewsPostClickListener = new OnNewsPostClickListener() {
         @Override
-        public void onNewsPostClick(NewsPost newsItem) {
-            callbackActions.onNewsPostSelected(newsItem);
+        public void onNewsPostClick(int newsPostId) {
+            callbackActions.onNewsPostSelected(newsPostId);
         }
     };
 
@@ -128,39 +133,22 @@ public class MainFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         IntentFilter newsfeedResultIntentFilter = new IntentFilter(
-                Constants.BROADCAST_ACTION_NEWSFEED_RESULT);
+                Constants.BROADCAST_ACTION_NEWSFEED);
 
-        NewsFeedReceiver newsFeedReceiver = new NewsFeedReceiver();
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(newsFeedReceiver, newsfeedResultIntentFilter);
+        NewsFeedUpdateReceiver newsFeedUpdateReceiver = new NewsFeedUpdateReceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(newsFeedUpdateReceiver, newsfeedResultIntentFilter);
 
-        if (savedInstanceState == null || !savedInstanceState.containsKey(NEWS_FEED)) {
+        getLoaderManager().initLoader(0, null, this);
+
+        if (savedInstanceState == null) {
             getNews();
-        } else {
-            newsFeed = savedInstanceState.getParcelableArrayList(NEWS_FEED);
-            fillAdapter();
         }
     }
 
-    private void fillAdapter() {
-        rvNews.setAdapter(new NewsAdapter(newsFeed, onNewsPostClickListener));
-        pbLoading.setVisibility(View.GONE);
-        rvNews.setVisibility(View.VISIBLE);
-    }
-
     private void getNews() {
-        pbLoading.setVisibility(View.VISIBLE);
-        emptyView.setText(R.string.no_news);
-        emptyView.setVisibility(View.GONE);
-        rvNews.setVisibility(View.GONE);
         Intent mServiceIntent = new Intent(getActivity(), VkService.class);
         mServiceIntent.setAction(VkService.ACTION_FETCH_NEWSFEED);
         getActivity().startService(mServiceIntent);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override
@@ -178,8 +166,8 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public class NewsFeedReceiver extends BroadcastReceiver {
-        public NewsFeedReceiver() {
+    public class NewsFeedUpdateReceiver extends BroadcastReceiver {
+        public NewsFeedUpdateReceiver() {
         }
 
         @Override
@@ -188,16 +176,25 @@ public class MainFragment extends Fragment {
                 return;
             }
 
-            newsFeed = intent.getParcelableArrayListExtra(Constants.NEWSFEED_LIST);
-
-            if (newsFeed == null) {
-                pbLoading.setVisibility(View.GONE);
-                rvNews.setVisibility(View.GONE);
-                emptyView.setVisibility(View.VISIBLE);
-                emptyView.setText(R.string.some_error);
-                return;
+            if (intent.getAction().equals(Constants.BROADCAST_ACTION_NEWSFEED)) {
+                boolean isRefreshing = intent.getBooleanExtra(Constants.REFRESHING, false);
+                if (isRefreshing) {
+                    pbLoading.setVisibility(View.VISIBLE);
+                    emptyView.setText(R.string.no_news);
+                    emptyView.setVisibility(View.GONE);
+                    rvNews.setVisibility(View.GONE);
+                } else {
+                    pbLoading.setVisibility(View.GONE);
+                    if (rvNews.getAdapter() == null || rvNews.getAdapter().getItemCount() == 0) {
+                        rvNews.setVisibility(View.GONE);
+                        emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_news : R.string.some_error);
+                        emptyView.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyView.setVisibility(View.GONE);
+                        rvNews.setVisibility(View.VISIBLE);
+                    }
+                }
             }
-            fillAdapter();
         }
     }
 }

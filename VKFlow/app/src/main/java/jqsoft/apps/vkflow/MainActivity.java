@@ -21,7 +21,6 @@ import com.vk.sdk.api.VKError;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jqsoft.apps.vkflow.fragments.MainFragment;
-import jqsoft.apps.vkflow.models.NewsPost;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -147,19 +146,23 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
     private void showMainForm() {
         if (!isSavedInstanceState) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, MainFragment.newInstance())
-                    .commitAllowingStateLoss();
+            if (getSupportFragmentManager().findFragmentByTag("main_form") == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, MainFragment.newInstance(), "main_form")
+                        .commitAllowingStateLoss();
+            }
         }
     }
 
     private void showLoginForm() {
         if (!isSavedInstanceState) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, LoginFragment.newInstance())
-                    .commitAllowingStateLoss();
+            if (getSupportFragmentManager().findFragmentByTag("login_form") == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, LoginFragment.newInstance(), "login_form")
+                        .commitAllowingStateLoss();
+            }
         }
     }
 
@@ -188,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     }
 
     @Override
-    public void onNewsPostSelected(NewsPost chosenNewsPost) {
+    public void onNewsPostSelected(int chosenNewsPostId) {
         Intent newsActivity = new Intent(this, NewsPieceActivity.class);
         startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
     }

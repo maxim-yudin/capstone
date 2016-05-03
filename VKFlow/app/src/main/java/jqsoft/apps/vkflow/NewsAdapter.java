@@ -1,6 +1,7 @@
 package jqsoft.apps.vkflow;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,20 +16,18 @@ import android.widget.Toast;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import jqsoft.apps.vkflow.models.NewsPost;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
+    private final Cursor cursor;
+
     public interface OnNewsPostClickListener {
-        void onNewsPostClick(NewsPost newsItem);
+        void onNewsPostClick(int newsPostId);
     }
 
     private final OnNewsPostClickListener listener;
-
-    private final ArrayList<NewsPost> newsFeed;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tvFriendName) public TextView tvFriendName;
@@ -51,9 +50,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         }
     }
 
-    public NewsAdapter(ArrayList<NewsPost> newsFeed, OnNewsPostClickListener listener) {
-        this.newsFeed = newsFeed;
+    public NewsAdapter(Cursor cursor, OnNewsPostClickListener listener) {
+        this.cursor = cursor;
         this.listener = listener;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        cursor.moveToPosition(position);
+        return cursor.getLong(NewsfeedLoader.INDEX_POST_ID);
     }
 
     @Override
@@ -66,12 +71,25 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-        final NewsPost post = newsFeed.get(position);
+        cursor.moveToPosition(position);
+
+        final NewsPost post = new NewsPost();
+
+        post.id = Integer.parseInt(cursor.getString(NewsfeedLoader.INDEX_POST_ID));
+        post.date = cursor.getLong(NewsfeedLoader.INDEX_DATE);
+        post.text = cursor.getString(NewsfeedLoader.INDEX_TEXT);
+        post.comments_count = cursor.getString(NewsfeedLoader.INDEX_COMMENTS_COUNT);
+        post.can_post_comment = (cursor.getInt(NewsfeedLoader.INDEX_CAN_POST_COMMENT) == 1);
+        post.likes_count = cursor.getString(NewsfeedLoader.INDEX_LIKES_COUNT);
+        post.user_likes = (cursor.getInt(NewsfeedLoader.INDEX_USER_LIKES) == 1);
+        post.can_like = (cursor.getInt(NewsfeedLoader.INDEX_CAN_LIKE) == 1);
+        post.userPhotoUrl = cursor.getString(NewsfeedLoader.INDEX_USER_PHOTO_URL);
+        post.userName = cursor.getString(NewsfeedLoader.INDEX_USER_NAME);
 
         View.OnClickListener newsPostClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onNewsPostClick(post);
+                listener.onNewsPostClick(post.id);
             }
         };
 
@@ -109,6 +127,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return newsFeed.size();
+        return cursor.getCount();
     }
 }
