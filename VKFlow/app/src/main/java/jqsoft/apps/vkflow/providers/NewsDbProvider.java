@@ -8,6 +8,7 @@ import com.tjeannin.provigen.ProviGenOpenHelper;
 import com.tjeannin.provigen.ProviGenProvider;
 
 import jqsoft.apps.vkflow.models.NewsPost;
+import jqsoft.apps.vkflow.models.NewsPostComment;
 
 public class NewsDbProvider extends ProviGenProvider {
     private static final String DB_NAME = "NewsfeedDb";
@@ -16,7 +17,7 @@ public class NewsDbProvider extends ProviGenProvider {
     private static final String AUTHORITY = "content://jqsoft.apps.vkflow";
 
     private static final Class[] contracts = new Class[]{
-            NewsPost.Contract.class};
+            NewsPost.Contract.class, NewsPostComment.Contract.class};
 
     @Override
     public SQLiteOpenHelper openHelper(Context context) {

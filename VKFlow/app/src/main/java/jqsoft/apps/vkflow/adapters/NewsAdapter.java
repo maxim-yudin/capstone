@@ -1,4 +1,4 @@
-package jqsoft.apps.vkflow;
+package jqsoft.apps.vkflow.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -18,13 +18,15 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jqsoft.apps.vkflow.R;
+import jqsoft.apps.vkflow.loaders.NewsfeedLoader;
 import jqsoft.apps.vkflow.models.NewsPost;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private final Cursor cursor;
 
     public interface OnNewsPostClickListener {
-        void onNewsPostClick(int newsPostId);
+        void onNewsPostClick(int sourceId, int newsPostId);
     }
 
     private final OnNewsPostClickListener listener;
@@ -76,6 +78,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         final NewsPost post = new NewsPost();
 
         post.id = Integer.parseInt(cursor.getString(NewsfeedLoader.INDEX_POST_ID));
+        post.source_id = Integer.parseInt(cursor.getString(NewsfeedLoader.INDEX_SOURCE_ID));
         post.date = cursor.getLong(NewsfeedLoader.INDEX_DATE);
         post.text = cursor.getString(NewsfeedLoader.INDEX_TEXT);
         post.comments_count = cursor.getString(NewsfeedLoader.INDEX_COMMENTS_COUNT);
@@ -89,7 +92,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         View.OnClickListener newsPostClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onNewsPostClick(post.id);
+                listener.onNewsPostClick(post.source_id, post.id);
             }
         };
 

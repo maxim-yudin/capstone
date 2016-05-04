@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     }
 
     @Override
-    public void onNewsPostSelected(int chosenNewsPostId) {
+    public void onNewsPostSelected(int chosenNewsPostSourceId, int chosenNewsPostId) {
         Intent newsActivity = new Intent(this, NewsPieceActivity.class);
         startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
     }

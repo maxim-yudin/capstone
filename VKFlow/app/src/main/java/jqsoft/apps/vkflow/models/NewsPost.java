@@ -108,6 +108,7 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
 
     protected NewsPost(Parcel in) {
         id = in.readInt();
+        source_id = in.readInt();
         date = in.readLong();
         text = in.readString();
         comments_count = in.readString();
@@ -127,6 +128,7 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
+        dest.writeInt(source_id);
         dest.writeLong(date);
         dest.writeString(text);
         dest.writeString(comments_count);
@@ -161,6 +163,9 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
     public interface Contract extends ProviGenBaseContract {
         @Column(Column.Type.INTEGER)
         String POST_ID = "id";
+
+        @Column(Column.Type.INTEGER)
+        String SOURCE_ID = "source_id";
 
         @Column(Column.Type.INTEGER)
         String DATE = "date";

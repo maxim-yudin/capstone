@@ -25,9 +25,9 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import jqsoft.apps.vkflow.Constants;
-import jqsoft.apps.vkflow.NewsAdapter;
-import jqsoft.apps.vkflow.NewsAdapter.OnNewsPostClickListener;
-import jqsoft.apps.vkflow.NewsfeedLoader;
+import jqsoft.apps.vkflow.adapters.NewsAdapter;
+import jqsoft.apps.vkflow.adapters.NewsAdapter.OnNewsPostClickListener;
+import jqsoft.apps.vkflow.loaders.NewsfeedLoader;
 import jqsoft.apps.vkflow.R;
 import jqsoft.apps.vkflow.Utils;
 import jqsoft.apps.vkflow.VkService;
@@ -63,7 +63,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
      * selection and signing out.
      */
     public interface CallbackActions {
-        void onNewsPostSelected(int chosenNewsPostId);
+        void onNewsPostSelected(int chosenNewsPostSourceId, int chosenNewsPostId);
 
         void onSignOut();
     }
@@ -74,7 +74,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
      */
     private static final CallbackActions dummyCallbackActions = new CallbackActions() {
         @Override
-        public void onNewsPostSelected(int chosenNewsPostId) {
+        public void onNewsPostSelected(int chosenNewsPostSourceId, int chosenNewsPostId) {
         }
 
         @Override
@@ -123,8 +123,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     final OnNewsPostClickListener onNewsPostClickListener = new OnNewsPostClickListener() {
         @Override
-        public void onNewsPostClick(int newsPostId) {
-            callbackActions.onNewsPostSelected(newsPostId);
+        public void onNewsPostClick(int newsPostSourceId, int newsPostId) {
+            callbackActions.onNewsPostSelected(newsPostSourceId, newsPostId);
         }
     };
 
@@ -177,7 +177,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             }
 
             if (intent.getAction().equals(Constants.BROADCAST_ACTION_NEWSFEED)) {
-                boolean isRefreshing = intent.getBooleanExtra(Constants.REFRESHING, false);
+                boolean isRefreshing = intent.getBooleanExtra(Constants.REFRESHING_NEWSFEED, false);
                 if (isRefreshing) {
                     pbLoading.setVisibility(View.VISIBLE);
                     emptyView.setText(R.string.no_news);
