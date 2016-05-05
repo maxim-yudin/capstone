@@ -7,6 +7,7 @@
     <string name="like_description">Like</string>
 
     <string name="no_news">No news</string>
+    <string name="no_comments">No comments</string>
     <string name="some_error">Some error, probably Internet is not available.</string>
 
     <string name="like_action">Like a piece of news #%1$s</string>

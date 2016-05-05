@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-public class NewsPieceActivity extends AppCompatActivity {
+import jqsoft.apps.vkflow.fragments.CommentsFragment;
+import jqsoft.apps.vkflow.models.NewsPostComment;
+
+public class CommentsActivity extends AppCompatActivity {
     private AdView adView;
 
     @Override
@@ -20,6 +23,16 @@ public class NewsPieceActivity extends AppCompatActivity {
                 .build();
         if (adView != null) {
             adView.loadAd(adRequest);
+        }
+
+        if (savedInstanceState == null) {
+            Bundle bundle = getIntent().getExtras();
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, CommentsFragment.newInstance(bundle.getString(NewsPostComment.OWNER_ID),
+                            bundle.getString(NewsPostComment.POST_ID)), "comments_form")
+                    .commit();
         }
     }
 

@@ -21,6 +21,7 @@ import com.vk.sdk.api.VKError;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jqsoft.apps.vkflow.fragments.MainFragment;
+import jqsoft.apps.vkflow.models.NewsPostComment;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -192,7 +193,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
     @Override
     public void onNewsPostSelected(int chosenNewsPostSourceId, int chosenNewsPostId) {
-        Intent newsActivity = new Intent(this, NewsPieceActivity.class);
+        Intent newsActivity = new Intent(this, CommentsActivity.class);
+        newsActivity.putExtra(NewsPostComment.OWNER_ID, String.valueOf(chosenNewsPostSourceId));
+        newsActivity.putExtra(NewsPostComment.POST_ID, String.valueOf(chosenNewsPostId));
         startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
     }
 

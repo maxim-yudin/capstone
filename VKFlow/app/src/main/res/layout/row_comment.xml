@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    android:id="@+id/rlCommentContent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/card_content_padding"
+    android:paddingLeft="@dimen/card_content_padding"
+    android:paddingRight="@dimen/card_content_padding"
+    android:paddingTop="@dimen/card_content_padding">
+
+    <FrameLayout
+        android:id="@+id/flFriendPhoto"
+        android:layout_width="@dimen/profile_photo_size"
+        android:layout_height="@dimen/profile_photo_size"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/tvFriendName"
+        android:layout_marginBottom="@dimen/margin_standard"
+        android:layout_marginEnd="@dimen/margin_standard"
+        android:layout_marginRight="@dimen/margin_standard">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivFriendPhoto"
+            android:layout_width="@dimen/profile_photo_size"
+            android:layout_height="@dimen/profile_photo_size"/>
+
+        <ProgressBar
+            android:id="@+id/pbFriendPhotoLoading"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvFriendName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/flFriendPhoto"
+        android:layout_toRightOf="@+id/flFriendPhoto"
+        android:paddingTop="@dimen/mini_padding"
+        android:text="@string/sample_text_friend_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textIsSelectable="false"
+        tools:text="@string/sample_text_friend_name"
+        />
+
+    <TextView
+        android:id="@+id/tvCommentDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/flFriendPhoto"
+        android:layout_alignLeft="@+id/tvFriendName"
+        android:layout_alignStart="@+id/tvFriendName"
+        android:layout_below="@id/tvFriendName"
+        android:text="@string/sample_text_date"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@color/gray"
+        tools:text="@string/sample_text_date"
+        />
+
+    <TextView
+        android:id="@+id/tvCommentContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/flFriendPhoto"
+        android:layout_alignStart="@+id/flFriendPhoto"
+        android:layout_below="@id/flFriendPhoto"
+        android:autoLink="all"
+        android:maxLines="10"
+        android:text="@string/sample_text_news_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:text="@string/sample_text_news_content"/>
+
+</RelativeLayout>

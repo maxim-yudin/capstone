@@ -55,7 +55,7 @@ public class NewsPostComment extends VKApiModel implements Parcelable, Identifia
      */
     public String userName;
 
-    public String getPostDate() {
+    public String getCommentDate() {
         return Utils.getDateFromUnitTime(date);
     }
 

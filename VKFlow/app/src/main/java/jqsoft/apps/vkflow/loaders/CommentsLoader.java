@@ -29,7 +29,10 @@ public class CommentsLoader extends CursorLoader {
     public static final int INDEX_USER_PHOTO_URL = 5;
     public static final int INDEX_USER_NAME = 6;
 
-    public CommentsLoader(Context context) {
-        super(context, NewsPostComment.Contract.CONTENT_URI, COMMENT_PROJECTION, null, null, "");
+    public CommentsLoader(Context context, String ownerId, String postId) {
+        super(context, NewsPostComment.Contract.CONTENT_URI, COMMENT_PROJECTION,
+                Contract.OWNER_ID + " = ? AND " + Contract.POST_ID + " = ?",
+                new String[]{ownerId, postId},
+                "");
     }
 }

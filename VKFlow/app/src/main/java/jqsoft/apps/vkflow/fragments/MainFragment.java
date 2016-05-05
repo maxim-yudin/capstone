@@ -25,12 +25,12 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import jqsoft.apps.vkflow.Constants;
-import jqsoft.apps.vkflow.adapters.NewsAdapter;
-import jqsoft.apps.vkflow.adapters.NewsAdapter.OnNewsPostClickListener;
-import jqsoft.apps.vkflow.loaders.NewsfeedLoader;
 import jqsoft.apps.vkflow.R;
 import jqsoft.apps.vkflow.Utils;
 import jqsoft.apps.vkflow.VkService;
+import jqsoft.apps.vkflow.adapters.NewsAdapter;
+import jqsoft.apps.vkflow.adapters.NewsAdapter.OnNewsPostClickListener;
+import jqsoft.apps.vkflow.loaders.NewsfeedLoader;
 
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
@@ -185,7 +185,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                     rvNews.setVisibility(View.GONE);
                 } else {
                     pbLoading.setVisibility(View.GONE);
-                    if (rvNews.getAdapter() == null || rvNews.getAdapter().getItemCount() == 0) {
+                    if (rvNews.getAdapter() != null && rvNews.getAdapter().getItemCount() == 0) {
                         rvNews.setVisibility(View.GONE);
                         emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_news : R.string.some_error);
                         emptyView.setVisibility(View.VISIBLE);
