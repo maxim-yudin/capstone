@@ -1,6 +1,7 @@
 package jqsoft.apps.vkflow;
 
 import android.app.IntentService;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -109,12 +110,12 @@ public class VkService extends IntentService {
                 }
 
                 if (newsfeedValues.size() != 0) {
-                    contentResolver.delete(NewsPost.Contract.CONTENT_URI, null, null);
-                    contentResolver.delete(NewsPostComment.Contract.CONTENT_URI, null, null);
-
-                    ContentValues[] newsPostListArray = new ContentValues[newsfeedValues.size()];
-                    newsfeedValues.toArray(newsPostListArray);
-                    contentResolver.bulkInsert(NewsPost.Contract.CONTENT_URI, newsPostListArray);
+                    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+                    ops.add(ContentProviderOperation.newDelete(NewsPost.Contract.CONTENT_URI).build());
+                    for (ContentValues newPost : newsfeedValues) {
+                        ops.add(ContentProviderOperation.newInsert(NewsPost.Contract.CONTENT_URI).withValues(newPost).build());
+                    }
+                    contentResolver.applyBatch(NewsPost.Contract.CONTENT_URI.getAuthority(), ops);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -189,11 +190,14 @@ public class VkService extends IntentService {
                 }
 
                 if (commentsValues.size() != 0) {
-                    contentResolver.delete(NewsPostComment.Contract.CONTENT_URI, null, null);
-
-                    ContentValues[] newsPostCommentListArray = new ContentValues[commentsValues.size()];
-                    commentsValues.toArray(newsPostCommentListArray);
-                    contentResolver.bulkInsert(NewsPostComment.Contract.CONTENT_URI, newsPostCommentListArray);
+                    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+                    ops.add(ContentProviderOperation.newDelete(NewsPostComment.Contract.CONTENT_URI).withSelection(
+                            NewsPostComment.Contract.OWNER_ID + " = ? AND " + NewsPostComment.Contract.POST_ID + " = ?",
+                            new String[]{ownerId, postId}).build());
+                    for (ContentValues newComment : commentsValues) {
+                        ops.add(ContentProviderOperation.newInsert(NewsPostComment.Contract.CONTENT_URI).withValues(newComment).build());
+                    }
+                    contentResolver.applyBatch(NewsPostComment.Contract.CONTENT_URI.getAuthority(), ops);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -44,6 +44,11 @@ public class CommentsFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         rvComments.setAdapter(new CommentsAdapter(cursor));
+        if (rvComments.getAdapter() != null && rvComments.getAdapter().getItemCount() == 0) {
+            emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_comments : R.string.some_error);
+        } else {
+            emptyView.setText("");
+        }
     }
 
     @Override
@@ -81,7 +86,7 @@ public class CommentsFragment extends Fragment implements LoaderManager.LoaderCa
         CommentsUpdateReceiver commentsUpdateReceiver = new CommentsUpdateReceiver();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(commentsUpdateReceiver, commentsResultIntentFilter);
 
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(1, null, this);
 
         if (savedInstanceState == null) {
             getComments();
@@ -110,19 +115,12 @@ public class CommentsFragment extends Fragment implements LoaderManager.LoaderCa
                 boolean isRefreshing = intent.getBooleanExtra(Constants.REFRESHING_COMMENTS, false);
                 if (isRefreshing) {
                     pbLoading.setVisibility(View.VISIBLE);
-                    emptyView.setText(R.string.no_comments);
                     emptyView.setVisibility(View.GONE);
                     rvComments.setVisibility(View.GONE);
                 } else {
                     pbLoading.setVisibility(View.GONE);
-                    if (rvComments.getAdapter() != null && rvComments.getAdapter().getItemCount() == 0) {
-                        rvComments.setVisibility(View.GONE);
-                        emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_comments : R.string.some_error);
-                        emptyView.setVisibility(View.VISIBLE);
-                    } else {
-                        emptyView.setVisibility(View.GONE);
-                        rvComments.setVisibility(View.VISIBLE);
-                    }
+                    rvComments.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.VISIBLE);
                 }
             }
         }

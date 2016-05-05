@@ -53,6 +53,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         rvNews.setAdapter(new NewsAdapter(cursor, onNewsPostClickListener));
         if (rvNews.getAdapter() != null && rvNews.getAdapter().getItemCount() == 0) {
             emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_news : R.string.some_error);
+        } else {
+            emptyView.setText("");
         }
     }
 
@@ -141,15 +143,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         NewsFeedUpdateReceiver newsFeedUpdateReceiver = new NewsFeedUpdateReceiver();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(newsFeedUpdateReceiver, newsfeedResultIntentFilter);
 
+        getLoaderManager().initLoader(0, null, this);
+
         if (savedInstanceState == null) {
             getNews();
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        getLoaderManager().initLoader(0, null, this);
     }
 
     private void getNews() {
@@ -187,11 +185,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 boolean isRefreshing = intent.getBooleanExtra(Constants.REFRESHING_NEWSFEED, false);
                 if (isRefreshing) {
                     pbLoading.setVisibility(View.VISIBLE);
-                    emptyView.setText("");
+                    emptyView.setVisibility(View.GONE);
                     rvNews.setVisibility(View.GONE);
                 } else {
                     pbLoading.setVisibility(View.GONE);
                     rvNews.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.VISIBLE);
                 }
             }
         }
