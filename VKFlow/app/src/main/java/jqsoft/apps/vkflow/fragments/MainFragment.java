@@ -51,6 +51,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         rvNews.setAdapter(new NewsAdapter(cursor, onNewsPostClickListener));
+        if (rvNews.getAdapter() != null && rvNews.getAdapter().getItemCount() == 0) {
+            emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_news : R.string.some_error);
+        }
     }
 
     @Override
@@ -138,11 +141,15 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         NewsFeedUpdateReceiver newsFeedUpdateReceiver = new NewsFeedUpdateReceiver();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(newsFeedUpdateReceiver, newsfeedResultIntentFilter);
 
-        getLoaderManager().initLoader(0, null, this);
-
         if (savedInstanceState == null) {
             getNews();
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getLoaderManager().initLoader(0, null, this);
     }
 
     private void getNews() {
@@ -180,19 +187,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 boolean isRefreshing = intent.getBooleanExtra(Constants.REFRESHING_NEWSFEED, false);
                 if (isRefreshing) {
                     pbLoading.setVisibility(View.VISIBLE);
-                    emptyView.setText(R.string.no_news);
-                    emptyView.setVisibility(View.GONE);
+                    emptyView.setText("");
                     rvNews.setVisibility(View.GONE);
                 } else {
                     pbLoading.setVisibility(View.GONE);
-                    if (rvNews.getAdapter() != null && rvNews.getAdapter().getItemCount() == 0) {
-                        rvNews.setVisibility(View.GONE);
-                        emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_news : R.string.some_error);
-                        emptyView.setVisibility(View.VISIBLE);
-                    } else {
-                        emptyView.setVisibility(View.GONE);
-                        rvNews.setVisibility(View.VISIBLE);
-                    }
+                    rvNews.setVisibility(View.VISIBLE);
                 }
             }
         }
