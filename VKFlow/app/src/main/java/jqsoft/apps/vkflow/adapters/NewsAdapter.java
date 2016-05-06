@@ -5,13 +5,10 @@ import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -39,7 +36,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         @Bind(R.id.tvNewsContent) public TextView tvNewsContent;
         @Bind(R.id.llComments) public View llComments;
         @Bind(R.id.tvCommentsCount) public TextView tvCommentsCount;
-        @Bind(R.id.ibLikes) public ImageButton ibLikes;
         @Bind(R.id.tvLikesCount) public TextView tvLikesCount;
 
         public ViewHolder(View itemView) {
@@ -82,10 +78,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         post.date = cursor.getLong(NewsfeedLoader.INDEX_DATE);
         post.text = cursor.getString(NewsfeedLoader.INDEX_TEXT);
         post.comments_count = cursor.getString(NewsfeedLoader.INDEX_COMMENTS_COUNT);
-        post.can_post_comment = (cursor.getInt(NewsfeedLoader.INDEX_CAN_POST_COMMENT) == 1);
         post.likes_count = cursor.getString(NewsfeedLoader.INDEX_LIKES_COUNT);
-        post.user_likes = (cursor.getInt(NewsfeedLoader.INDEX_USER_LIKES) == 1);
-        post.can_like = (cursor.getInt(NewsfeedLoader.INDEX_CAN_LIKE) == 1);
         post.userPhotoUrl = cursor.getString(NewsfeedLoader.INDEX_USER_PHOTO_URL);
         post.userName = cursor.getString(NewsfeedLoader.INDEX_USER_NAME);
 
@@ -98,15 +91,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
         viewHolder.getContentView().setOnClickListener(newsPostClickListener);
         viewHolder.llComments.setOnClickListener(newsPostClickListener);
+        viewHolder.tvNewsContent.setOnClickListener(newsPostClickListener);
 
         final Context context = viewHolder.getContentView().getContext();
-        viewHolder.ibLikes.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, context.getString(R.string.like_action, viewHolder.getAdapterPosition()),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
 
         viewHolder.tvFriendName.setText(post.userName);
         viewHolder.tvNewsContent.setText(post.text);

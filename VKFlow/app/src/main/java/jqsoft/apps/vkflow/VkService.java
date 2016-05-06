@@ -99,10 +99,7 @@ public class VkService extends IntentService {
                         newsPostValues.put(NewsPost.Contract.DATE, post.date);
                         newsPostValues.put(NewsPost.Contract.TEXT, post.text);
                         newsPostValues.put(NewsPost.Contract.COMMENTS_COUNT, post.comments_count);
-                        newsPostValues.put(NewsPost.Contract.CAN_POST_COMMENT, post.can_post_comment);
                         newsPostValues.put(NewsPost.Contract.LIKES_COUNT, post.likes_count);
-                        newsPostValues.put(NewsPost.Contract.USER_LIKES, post.user_likes);
-                        newsPostValues.put(NewsPost.Contract.CAN_LIKE, post.can_like);
                         newsPostValues.put(NewsPost.Contract.USER_PHOTO_URL, post.userPhotoUrl);
                         newsPostValues.put(NewsPost.Contract.USER_NAME, post.userName);
                         newsfeedValues.add(newsPostValues);

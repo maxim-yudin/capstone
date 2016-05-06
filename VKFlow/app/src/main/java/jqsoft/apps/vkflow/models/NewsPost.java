@@ -13,7 +13,6 @@ import com.vk.sdk.api.model.VKApiModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import jqsoft.apps.vkflow.ParseUtils;
 import jqsoft.apps.vkflow.Utils;
 import jqsoft.apps.vkflow.providers.NewsDbProvider;
 
@@ -44,24 +43,9 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
     public String comments_count;
 
     /**
-     * Whether the current user can leave comments to the post (false — cannot, true — can)
-     */
-    public boolean can_post_comment;
-
-    /**
      * Number of users who liked the post.
      */
     public String likes_count;
-
-    /**
-     * Whether the user liked the post (false — not liked, true — liked)
-     */
-    public boolean user_likes;
-
-    /**
-     * Whether the user can like the post (false — cannot, true — can).
-     */
-    public boolean can_like;
 
     /**
      * Avatar photo url
@@ -95,13 +79,10 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
         JSONObject comments = source.optJSONObject("comments");
         if (comments != null) {
             comments_count = String.valueOf(comments.optInt("count"));
-            can_post_comment = ParseUtils.parseBoolean(comments, "can_post");
         }
         JSONObject likes = source.optJSONObject("likes");
         if (likes != null) {
             likes_count = String.valueOf(likes.optInt("count"));
-            user_likes = ParseUtils.parseBoolean(likes, "user_likes");
-            can_like = ParseUtils.parseBoolean(likes, "can_like");
         }
         return this;
     }
@@ -112,10 +93,7 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
         date = in.readLong();
         text = in.readString();
         comments_count = in.readString();
-        can_post_comment = in.readByte() != 0x00;
         likes_count = in.readString();
-        user_likes = in.readByte() != 0x00;
-        can_like = in.readByte() != 0x00;
         userPhotoUrl = in.readString();
         userName = in.readString();
     }
@@ -132,10 +110,7 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
         dest.writeLong(date);
         dest.writeString(text);
         dest.writeString(comments_count);
-        dest.writeByte((byte) (can_post_comment ? 0x01 : 0x00));
         dest.writeString(likes_count);
-        dest.writeByte((byte) (user_likes ? 0x01 : 0x00));
-        dest.writeByte((byte) (can_like ? 0x01 : 0x00));
         dest.writeString(userPhotoUrl);
         dest.writeString(userName);
     }
@@ -176,17 +151,8 @@ public class NewsPost extends VKApiModel implements Parcelable, Identifiable {
         @Column(Column.Type.TEXT)
         String COMMENTS_COUNT = "comments_count";
 
-        @Column(Column.Type.INTEGER)
-        String CAN_POST_COMMENT = "can_post_comment";
-
         @Column(Column.Type.TEXT)
         String LIKES_COUNT = "likes_count";
-
-        @Column(Column.Type.INTEGER)
-        String USER_LIKES = "user_likes";
-
-        @Column(Column.Type.INTEGER)
-        String CAN_LIKE = "can_like";
 
         @Column(Column.Type.TEXT)
         String USER_PHOTO_URL = "userPhotoUrl";
