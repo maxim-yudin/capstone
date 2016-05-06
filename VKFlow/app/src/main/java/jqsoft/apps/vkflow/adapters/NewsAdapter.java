@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jqsoft.apps.vkflow.GA;
 import jqsoft.apps.vkflow.R;
 import jqsoft.apps.vkflow.loaders.NewsfeedLoader;
 import jqsoft.apps.vkflow.models.NewsPost;
@@ -85,6 +86,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         View.OnClickListener newsPostClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GA.sendEvent(GA.createEvent(GA.CATEGORY_USAGE, GA.EVENT_POST_CLICK, String.valueOf(post.id)));
                 listener.onNewsPostClick(post.source_id, post.id);
             }
         };

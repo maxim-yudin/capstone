@@ -1,7 +1,11 @@
 package jqsoft.apps.vkflow;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -15,7 +19,15 @@ public class CommentsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_piece);
+        setContentView(R.layout.activity_comments);
+
+        Bundle bundle = getIntent().getExtras();
+
+        GA.sendEvent(GA.createEvent(GA.CATEGORY_USAGE, GA.EVENT_COMMENTS_RUN, bundle.getString(NewsPostComment.POST_ID)));
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         adView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
@@ -25,9 +37,11 @@ public class CommentsActivity extends AppCompatActivity {
             adView.loadAd(adRequest);
         }
 
-        if (savedInstanceState == null) {
-            Bundle bundle = getIntent().getExtras();
+        if (!Utils.isInternetConnected(this)) {
+            adView.setVisibility(View.GONE);
+        }
 
+        if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, CommentsFragment.newInstance(bundle.getString(NewsPostComment.OWNER_ID),
@@ -58,5 +72,16 @@ public class CommentsActivity extends AppCompatActivity {
             adView.destroy();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

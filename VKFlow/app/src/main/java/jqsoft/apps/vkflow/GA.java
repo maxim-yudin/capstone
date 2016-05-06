@@ -13,6 +13,11 @@ import java.util.Map;
  * Created by maximyudin on 21.03.16.
  */
 public class GA {
+    public static final String CATEGORY_USAGE = "usage";
+    public static final String EVENT_POST_CLICK = "post_click";
+    public static final String EVENT_NEWSFEED_RUN = "newsfeed_run";
+    public static final String EVENT_COMMENTS_RUN = "comments_run";
+
     public enum Target {
         APP
     }

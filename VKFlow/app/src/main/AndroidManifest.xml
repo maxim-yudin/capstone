@@ -14,6 +14,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -36,7 +37,13 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
 
-        <activity android:name=".CommentsActivity">
+        <activity
+            android:name=".CommentsActivity"
+            android:label="@string/comments"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
         </activity>
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
@@ -51,7 +58,7 @@
         <provider
             android:name=".providers.NewsDbProvider"
             android:authorities="jqsoft.apps.vkflow"
-            android:exported="false" />
+            android:exported="false"/>
     </application>
 
 </manifest>
