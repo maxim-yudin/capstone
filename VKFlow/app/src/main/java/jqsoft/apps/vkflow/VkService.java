@@ -136,7 +136,7 @@ public class VkService extends IntentService {
         if (Utils.isInternetConnected(this)) {
             try {
                 VKJsonOperation getComments = new VKJsonOperation(new VKRequest("wall.getComments",
-                        VKParameters.from("owner_id", ownerId, "post_id", postId, "extended", "1")).getPreparedRequest());
+                        VKParameters.from("owner_id", ownerId, "post_id", postId, "extended", "1", "count", "100")).getPreparedRequest());
                 getComments.start(Executors.newSingleThreadExecutor());
                 JSONObject commentsJson = getComments.getResponseJson().getJSONObject("response");
 
