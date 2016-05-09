@@ -1,0 +1,7 @@
+<resources>
+    <!--
+        Layout alias to replace the single-pane version of the layout with a
+        two-pane version on Large screens.
+    -->
+    <item name="activity_main" type="layout">@layout/activity_main_twopane</item>
+</resources>

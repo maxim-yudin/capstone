@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF6E40</color>
 
     <color name="gray">#c1bfc1</color>
+    <color name="card_pressed">#112196f3</color>
 </resources>

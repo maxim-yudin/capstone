@@ -19,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import jqsoft.apps.vkflow.Constants;
@@ -33,6 +36,7 @@ public class CommentsFragment extends Fragment implements LoaderManager.LoaderCa
     @Bind(R.id.rvComments) RecyclerView rvComments;
     @Bind(android.R.id.empty) TextView emptyView;
     @Bind(R.id.pbLoading) ProgressBar pbLoading;
+    @Bind(R.id.adView) AdView adView;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -46,6 +50,7 @@ public class CommentsFragment extends Fragment implements LoaderManager.LoaderCa
         rvComments.setAdapter(new CommentsAdapter(cursor));
         if (rvComments.getAdapter() != null && rvComments.getAdapter().getItemCount() == 0) {
             emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_comments : R.string.some_error);
+            emptyView.setVisibility(View.VISIBLE);
         } else {
             emptyView.setText("");
         }
@@ -80,6 +85,17 @@ public class CommentsFragment extends Fragment implements LoaderManager.LoaderCa
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        if (adView != null) {
+            adView.loadAd(adRequest);
+        }
+
+        if (!Utils.isInternetConnected(getContext())) {
+            adView.setVisibility(View.GONE);
+        }
+
         IntentFilter commentsResultIntentFilter = new IntentFilter(
                 Constants.BROADCAST_ACTION_COMMENTS);
 
@@ -91,6 +107,30 @@ public class CommentsFragment extends Fragment implements LoaderManager.LoaderCa
         if (savedInstanceState == null) {
             getComments();
         }
+    }
+
+    @Override
+    public void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
     }
 
     private void getComments() {

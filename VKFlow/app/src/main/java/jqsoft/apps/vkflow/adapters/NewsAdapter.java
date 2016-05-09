@@ -2,6 +2,8 @@ package jqsoft.apps.vkflow.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.ColorInt;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +23,22 @@ import jqsoft.apps.vkflow.loaders.NewsfeedLoader;
 import jqsoft.apps.vkflow.models.NewsPost;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
+    public static final int INVALID_POSITION = -1;
+
     private final Cursor cursor;
+    private int activatedPosition = INVALID_POSITION;
+
+    private @ColorInt int cardContentPressedColor;
+    private @ColorInt int cardContentDefaultColor;
+
+    private boolean isTwoPane = false;
 
     public interface OnNewsPostClickListener {
         void onNewsPostClick(int sourceId, int newsPostId);
+    }
+
+    public int getActivatedPosition() {
+        return activatedPosition;
     }
 
     private final OnNewsPostClickListener listener;
@@ -38,6 +52,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         @Bind(R.id.llComments) public View llComments;
         @Bind(R.id.tvCommentsCount) public TextView tvCommentsCount;
         @Bind(R.id.tvLikesCount) public TextView tvLikesCount;
+        @Bind(R.id.llCardContent) public View llCardContent;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -49,9 +64,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         }
     }
 
-    public NewsAdapter(Cursor cursor, OnNewsPostClickListener listener) {
+    public NewsAdapter(Cursor cursor, OnNewsPostClickListener listener, boolean isTwoPane, int activatedPosition) {
         this.cursor = cursor;
         this.listener = listener;
+        this.isTwoPane = isTwoPane;
+        this.activatedPosition = activatedPosition;
     }
 
     @Override
@@ -65,11 +82,14 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.row_news_item, viewGroup, false);
 
+        cardContentPressedColor = ContextCompat.getColor(v.getContext(), R.color.card_pressed);
+        cardContentDefaultColor = ContextCompat.getColor(v.getContext(), android.R.color.transparent);
+
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         cursor.moveToPosition(position);
 
         final NewsPost post = new NewsPost();
@@ -83,9 +103,28 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         post.userPhotoUrl = cursor.getString(NewsfeedLoader.INDEX_USER_PHOTO_URL);
         post.userName = cursor.getString(NewsfeedLoader.INDEX_USER_NAME);
 
+        if (isTwoPane) {
+            if (activatedPosition == INVALID_POSITION) {
+                activatedPosition = 0;
+                GA.sendEvent(GA.createEvent(GA.CATEGORY_USAGE, GA.EVENT_POST_CLICK, String.valueOf(post.id)));
+                listener.onNewsPostClick(post.source_id, post.id);
+            }
+
+            if (activatedPosition == position) {
+                viewHolder.llCardContent.setBackgroundColor(cardContentPressedColor);
+            } else {
+                viewHolder.llCardContent.setBackgroundColor(cardContentDefaultColor);
+            }
+        }
+
         View.OnClickListener newsPostClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isTwoPane) {
+                    notifyItemChanged(activatedPosition);
+                    activatedPosition = position;
+                    notifyItemChanged(position);
+                }
                 GA.sendEvent(GA.createEvent(GA.CATEGORY_USAGE, GA.EVENT_POST_CLICK, String.valueOf(post.id)));
                 listener.onNewsPostClick(post.source_id, post.id);
             }

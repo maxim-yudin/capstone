@@ -33,6 +33,10 @@ import jqsoft.apps.vkflow.adapters.NewsAdapter.OnNewsPostClickListener;
 import jqsoft.apps.vkflow.loaders.NewsfeedLoader;
 
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    public static final String IS_TWO_PANE = "IS_TWO_PANE";
+    private int activatedPosition = NewsAdapter.INVALID_POSITION;
+
     /**
      * The fragment's current callback object, which is notified of news item
      * clicks and signing out.
@@ -50,10 +54,13 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        rvNews.setAdapter(new NewsAdapter(cursor, onNewsPostClickListener));
+        rvNews.setAdapter(new NewsAdapter(cursor, onNewsPostClickListener, getArguments().getBoolean(IS_TWO_PANE), activatedPosition));
         if (rvNews.getAdapter() != null && rvNews.getAdapter().getItemCount() == 0) {
+            callbackActions.onUpdateCommentsWhetherNewsfeedListEmpty(true);
             emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_news : R.string.some_error);
+            emptyView.setVisibility(View.VISIBLE);
         } else {
+            callbackActions.onUpdateCommentsWhetherNewsfeedListEmpty(false);
             emptyView.setText("");
         }
     }
@@ -70,6 +77,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public interface CallbackActions {
         void onNewsPostSelected(int chosenNewsPostSourceId, int chosenNewsPostId);
 
+        void onUpdateCommentsWhetherNewsfeedListEmpty(boolean isEmpty);
+
         void onSignOut();
     }
 
@@ -80,6 +89,10 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final CallbackActions dummyCallbackActions = new CallbackActions() {
         @Override
         public void onNewsPostSelected(int chosenNewsPostSourceId, int chosenNewsPostId) {
+        }
+
+        @Override
+        public void onUpdateCommentsWhetherNewsfeedListEmpty(boolean isEmpty) {
         }
 
         @Override
@@ -105,14 +118,40 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         callbackActions = dummyCallbackActions;
     }
 
-    public static MainFragment newInstance() {
-        return new MainFragment();
+    public static MainFragment newInstance(boolean isTwoPane) {
+        MainFragment fragment = new MainFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(IS_TWO_PANE, isTwoPane);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (getArguments().getBoolean(IS_TWO_PANE)) {
+            if (rvNews.getAdapter() != null) {
+                outState.putInt(STATE_ACTIVATED_POSITION, ((NewsAdapter) rvNews.getAdapter()).getActivatedPosition());
+            }
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (getArguments().getBoolean(IS_TWO_PANE)) {
+            if (savedInstanceState != null
+                    && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+                activatedPosition = savedInstanceState.getInt(STATE_ACTIVATED_POSITION);
+            }
+        }
     }
 
     @Override
@@ -184,6 +223,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             if (intent.getAction().equals(Constants.BROADCAST_ACTION_NEWSFEED)) {
                 boolean isRefreshing = intent.getBooleanExtra(Constants.REFRESHING_NEWSFEED, false);
                 if (isRefreshing) {
+                    callbackActions.onUpdateCommentsWhetherNewsfeedListEmpty(true);
                     pbLoading.setVisibility(View.VISIBLE);
                     emptyView.setVisibility(View.GONE);
                     rvNews.setVisibility(View.GONE);

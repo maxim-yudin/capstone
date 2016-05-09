@@ -21,6 +21,7 @@ import com.vk.sdk.api.VKError;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jqsoft.apps.vkflow.fragments.CommentsFragment;
 import jqsoft.apps.vkflow.fragments.MainFragment;
 import jqsoft.apps.vkflow.models.NewsPostComment;
 
@@ -29,6 +30,7 @@ import jqsoft.apps.vkflow.models.NewsPostComment;
  * well.
  */
 public class MainActivity extends AppCompatActivity implements MainFragment.CallbackActions {
+    private boolean mTwoPane;
     private static final int REQUEST_NEWS_PIECE = 1;
 
     /**
@@ -44,12 +46,19 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
     private InterstitialAd interstitialAd;
 
+    private View containerComments = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GA.sendEvent(GA.createEvent(GA.CATEGORY_USAGE, GA.EVENT_NEWSFEED_RUN, null));
+        containerComments = findViewById(R.id.containerComments);
+        if (containerComments != null) {
+            mTwoPane = true;
+        }
+
+        GA.sendEvent(GA.createEvent(GA.CATEGORY_USAGE, mTwoPane ? GA.EVENT_NEWSFEED_WITH_COMMENTS_RUN : GA.EVENT_NEWSFEED_RUN, null));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -156,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             if (getSupportFragmentManager().findFragmentByTag("main_form") == null) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, MainFragment.newInstance(), "main_form")
+                        .replace(R.id.container, MainFragment.newInstance(mTwoPane), "main_form")
                         .commitAllowingStateLoss();
             }
         }
@@ -199,14 +208,39 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
     @Override
     public void onNewsPostSelected(int chosenNewsPostSourceId, int chosenNewsPostId) {
-        Intent newsActivity = new Intent(this, CommentsActivity.class);
-        newsActivity.putExtra(NewsPostComment.OWNER_ID, String.valueOf(chosenNewsPostSourceId));
-        newsActivity.putExtra(NewsPostComment.POST_ID, String.valueOf(chosenNewsPostId));
-        startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
+        if (mTwoPane) {
+            containerComments.setVisibility(View.VISIBLE);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.containerComments, CommentsFragment.newInstance(String.valueOf(chosenNewsPostSourceId),
+                            String.valueOf(chosenNewsPostId)), "comments_form")
+                    .commit();
+        } else {
+            Intent newsActivity = new Intent(this, CommentsActivity.class);
+            newsActivity.putExtra(NewsPostComment.OWNER_ID, String.valueOf(chosenNewsPostSourceId));
+            newsActivity.putExtra(NewsPostComment.POST_ID, String.valueOf(chosenNewsPostId));
+            startActivityForResult(newsActivity, REQUEST_NEWS_PIECE);
+        }
+    }
+
+    @Override
+    public void onUpdateCommentsWhetherNewsfeedListEmpty(boolean isEmpty) {
+        if (mTwoPane) {
+            if (isEmpty) {
+                CommentsFragment commentsFragment =
+                        (CommentsFragment) getSupportFragmentManager().findFragmentById(R.id.containerComments);
+                if (commentsFragment != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .remove(commentsFragment).commit();
+                }
+            }
+            containerComments.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        }
     }
 
     @Override
     public void onSignOut() {
+        onUpdateCommentsWhetherNewsfeedListEmpty(true);
         VKSdk.logout();
         if (!VKSdk.isLoggedIn()) {
             showLoginForm();

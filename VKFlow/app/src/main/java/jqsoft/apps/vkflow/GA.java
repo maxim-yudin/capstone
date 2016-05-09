@@ -17,6 +17,7 @@ public class GA {
     public static final String EVENT_POST_CLICK = "post_click";
     public static final String EVENT_NEWSFEED_RUN = "newsfeed_run";
     public static final String EVENT_COMMENTS_RUN = "comments_run";
+    public static final String EVENT_NEWSFEED_WITH_COMMENTS_RUN = "newsfeed_with_comments_run";
 
     public enum Target {
         APP
