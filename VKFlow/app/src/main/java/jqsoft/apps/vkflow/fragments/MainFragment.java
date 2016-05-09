@@ -33,7 +33,7 @@ import jqsoft.apps.vkflow.adapters.NewsAdapter.OnNewsPostClickListener;
 import jqsoft.apps.vkflow.loaders.NewsfeedLoader;
 
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    public static final String STATE_ACTIVATED_POSITION = "activated_position";
     public static final String IS_TWO_PANE = "IS_TWO_PANE";
     private int activatedPosition = NewsAdapter.INVALID_POSITION;
 
@@ -47,6 +47,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Bind(android.R.id.empty) TextView emptyView;
     @Bind(R.id.pbLoading) ProgressBar pbLoading;
 
+    private boolean isSavedInstanceState = false;
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new NewsfeedLoader(getActivity());
@@ -58,10 +60,17 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         if (rvNews.getAdapter() != null && rvNews.getAdapter().getItemCount() == 0) {
             callbackActions.onUpdateCommentsWhetherNewsfeedListEmpty(true);
             emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_news : R.string.some_error);
-            emptyView.setVisibility(View.VISIBLE);
+            if (pbLoading.getVisibility() == View.GONE) {
+                emptyView.setVisibility(View.VISIBLE);
+            }
         } else {
             callbackActions.onUpdateCommentsWhetherNewsfeedListEmpty(false);
             emptyView.setText("");
+            if (!isSavedInstanceState) {
+                if (activatedPosition != NewsAdapter.INVALID_POSITION) {
+                    rvNews.scrollToPosition(activatedPosition);
+                }
+            }
         }
     }
 
@@ -118,10 +127,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         callbackActions = dummyCallbackActions;
     }
 
-    public static MainFragment newInstance(boolean isTwoPane) {
+    public static MainFragment newInstance(boolean isTwoPane, int activatedPosition) {
         MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
         args.putBoolean(IS_TWO_PANE, isTwoPane);
+        args.putInt(STATE_ACTIVATED_POSITION, activatedPosition);
         fragment.setArguments(args);
         return fragment;
     }
@@ -145,6 +155,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        isSavedInstanceState = (savedInstanceState != null);
+
+        if (savedInstanceState == null) {
+            activatedPosition = getArguments().getInt(STATE_ACTIVATED_POSITION);
+        }
 
         if (getArguments().getBoolean(IS_TWO_PANE)) {
             if (savedInstanceState != null

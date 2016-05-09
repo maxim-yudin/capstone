@@ -42,7 +42,8 @@
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/ivFriendPhoto"
                         android:layout_width="@dimen/profile_photo_size"
-                        android:layout_height="@dimen/profile_photo_size"/>
+                        android:layout_height="@dimen/profile_photo_size"
+                        android:contentDescription="@string/content_friend_photo"/>
 
                     <ProgressBar
                         android:id="@+id/pbFriendPhotoLoading"
@@ -149,7 +150,7 @@
                     android:layout_marginRight="@dimen/margin_standard"
                     android:drawableLeft="@drawable/ic_favorite_24dp"
                     android:drawablePadding="@dimen/view_margin"
-                    android:drawableTint="@color/gray"
+                    android:drawableStart="@drawable/ic_favorite_24dp"
                     android:gravity="center"
                     android:text="@string/sample_likes_count"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"

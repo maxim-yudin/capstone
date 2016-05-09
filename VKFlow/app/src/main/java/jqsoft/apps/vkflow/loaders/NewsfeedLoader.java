@@ -10,7 +10,7 @@ import jqsoft.apps.vkflow.models.NewsPost.Contract;
  * Created by maximyudin on 29.04.16.
  */
 public class NewsfeedLoader extends CursorLoader {
-    private static final String[] NEWSPOST_PROJECTION = new String[]{
+    public static final String[] NEWSPOST_PROJECTION = new String[]{
             Contract.POST_ID,
             Contract.SOURCE_ID,
             Contract.DATE,

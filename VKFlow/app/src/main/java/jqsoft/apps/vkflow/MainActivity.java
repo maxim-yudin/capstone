@@ -21,6 +21,7 @@ import com.vk.sdk.api.VKError;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jqsoft.apps.vkflow.adapters.NewsAdapter;
 import jqsoft.apps.vkflow.fragments.CommentsFragment;
 import jqsoft.apps.vkflow.fragments.MainFragment;
 import jqsoft.apps.vkflow.models.NewsPostComment;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
     private View containerComments = null;
 
+    private int activatedPositionFromWidget = NewsAdapter.INVALID_POSITION;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +69,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         isSavedInstanceState = (savedInstanceState != null);
 
         if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                activatedPositionFromWidget =
+                        extras.getInt(MainFragment.STATE_ACTIVATED_POSITION,
+                                NewsAdapter.INVALID_POSITION);
+            }
+
             VKSdk.wakeUpSession(this, new VKCallback<LoginState>() {
                 @Override
                 public void onResult(VKSdk.LoginState res) {
@@ -165,7 +175,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             if (getSupportFragmentManager().findFragmentByTag("main_form") == null) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, MainFragment.newInstance(mTwoPane), "main_form")
+                        .replace(R.id.container, MainFragment.newInstance(mTwoPane,
+                                activatedPositionFromWidget), "main_form")
                         .commitAllowingStateLoss();
             }
         }

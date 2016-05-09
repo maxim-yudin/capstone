@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llContent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/card_margin_vertical">
+
+    <RelativeLayout
+        android:id="@+id/rlNewsContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/card_content_padding"
+        android:paddingLeft="@dimen/card_content_padding"
+        android:paddingRight="@dimen/card_content_padding"
+        android:paddingTop="@dimen/card_content_padding">
+
+        <ImageView
+            android:id="@+id/ivFriendPhoto"
+            android:layout_width="@dimen/profile_photo_size"
+            android:layout_height="@dimen/profile_photo_size"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/tvFriendName"
+            android:layout_marginBottom="@dimen/margin_standard"
+            android:layout_marginEnd="@dimen/margin_standard"
+            android:layout_marginRight="@dimen/margin_standard"
+            android:contentDescription="@string/content_friend_photo"/>
+
+        <TextView
+            android:id="@+id/tvFriendName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/ivFriendPhoto"
+            android:layout_toRightOf="@+id/ivFriendPhoto"
+            android:paddingTop="@dimen/mini_padding"
+            android:text="@string/sample_text_friend_name"
+            android:textColor="@color/primary_text_default_material_light"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_body_2_material"
+            tools:text="@string/sample_text_friend_name"
+            />
+
+        <TextView
+            android:id="@+id/tvNewsDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivFriendPhoto"
+            android:layout_alignLeft="@+id/tvFriendName"
+            android:layout_alignStart="@+id/tvFriendName"
+            android:layout_below="@id/tvFriendName"
+            android:text="@string/sample_text_date"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/abc_text_size_caption_material"
+            tools:text="@string/sample_text_date"
+            />
+
+        <TextView
+            android:id="@+id/tvNewsContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/ivFriendPhoto"
+            android:layout_alignStart="@+id/ivFriendPhoto"
+            android:layout_below="@id/ivFriendPhoto"
+            android:maxLines="10"
+            android:text="@string/sample_text_news_content"
+            android:textColor="@color/primary_text_default_material_light"
+            android:textSize="@dimen/abc_text_size_body_1_material"
+            tools:text="@string/sample_text_news_content"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/card_margin_vertical"
+        android:layout_marginStart="@dimen/card_margin_vertical">
+
+        <LinearLayout
+            android:id="@+id/llComments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/margin_standard">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/view_margin"
+                android:layout_marginRight="@dimen/view_margin"
+                android:text="@string/comments"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/abc_text_size_button_material"/>
+
+            <TextView
+                android:id="@+id/tvCommentsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_comments_count"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/abc_text_size_caption_material"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvLikesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/margin_standard"
+            android:layout_marginRight="@dimen/margin_standard"
+            android:drawableLeft="@drawable/ic_favorite_24dp"
+            android:drawablePadding="@dimen/view_margin"
+            android:drawableStart="@drawable/ic_favorite_24dp"
+            android:gravity="center"
+            android:text="@string/sample_likes_count"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/abc_text_size_caption_material"/>
+    </RelativeLayout>
+
+</LinearLayout>

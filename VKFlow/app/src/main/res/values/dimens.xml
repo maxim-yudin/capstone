@@ -17,4 +17,10 @@
     <dimen name="mini_padding">2dp</dimen>
 
     <dimen name="action_button_width">40dp</dimen>
+
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="widget_width">250dp</dimen>
+    <dimen name="widget_height">110dp</dimen>
+
+    <dimen name="default_text_size">14sp</dimen>
 </resources>

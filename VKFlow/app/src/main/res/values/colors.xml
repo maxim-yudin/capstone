@@ -6,4 +6,6 @@
 
     <color name="gray">#c1bfc1</color>
     <color name="card_pressed">#112196f3</color>
+
+    <color name="default_text_color">#de000000</color>
 </resources>

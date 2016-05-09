@@ -50,7 +50,9 @@ public class CommentsFragment extends Fragment implements LoaderManager.LoaderCa
         rvComments.setAdapter(new CommentsAdapter(cursor));
         if (rvComments.getAdapter() != null && rvComments.getAdapter().getItemCount() == 0) {
             emptyView.setText(Utils.isInternetConnected(getContext()) ? R.string.no_comments : R.string.some_error);
-            emptyView.setVisibility(View.VISIBLE);
+            if (pbLoading.getVisibility() == View.GONE) {
+                emptyView.setVisibility(View.VISIBLE);
+            }
         } else {
             emptyView.setText("");
         }
