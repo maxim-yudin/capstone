@@ -1,10 +1,14 @@
 package jqsoft.apps.vkflow;
 
 import android.app.IntentService;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -23,7 +27,9 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
 import jqsoft.apps.vkflow.models.NewsPost;
+import jqsoft.apps.vkflow.models.NewsPost.Contract;
 import jqsoft.apps.vkflow.models.NewsPostComment;
+import jqsoft.apps.vkflow.widget.NewsfeedWidgetProvider;
 
 public class VkService extends IntentService {
     public static final String ACTION_FETCH_NEWSFEED = "jqsoft.apps.vkflow.action.FETCH_NEWSFEED";
@@ -94,25 +100,25 @@ public class VkService extends IntentService {
                         post.userPhotoUrl = photoUrl;
 
                         ContentValues newsPostValues = new ContentValues();
-                        newsPostValues.put(NewsPost.Contract.POST_ID, post.getId());
-                        newsPostValues.put(NewsPost.Contract.SOURCE_ID, post.source_id);
-                        newsPostValues.put(NewsPost.Contract.DATE, post.date);
-                        newsPostValues.put(NewsPost.Contract.TEXT, post.text);
-                        newsPostValues.put(NewsPost.Contract.COMMENTS_COUNT, post.comments_count);
-                        newsPostValues.put(NewsPost.Contract.LIKES_COUNT, post.likes_count);
-                        newsPostValues.put(NewsPost.Contract.USER_PHOTO_URL, post.userPhotoUrl);
-                        newsPostValues.put(NewsPost.Contract.USER_NAME, post.userName);
+                        newsPostValues.put(Contract.POST_ID, post.getId());
+                        newsPostValues.put(Contract.SOURCE_ID, post.source_id);
+                        newsPostValues.put(Contract.DATE, post.date);
+                        newsPostValues.put(Contract.TEXT, post.text);
+                        newsPostValues.put(Contract.COMMENTS_COUNT, post.comments_count);
+                        newsPostValues.put(Contract.LIKES_COUNT, post.likes_count);
+                        newsPostValues.put(Contract.USER_PHOTO_URL, post.userPhotoUrl);
+                        newsPostValues.put(Contract.USER_NAME, post.userName);
                         newsfeedValues.add(newsPostValues);
                     }
                 }
 
                 if (newsfeedValues.size() != 0) {
                     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-                    ops.add(ContentProviderOperation.newDelete(NewsPost.Contract.CONTENT_URI).build());
+                    ops.add(ContentProviderOperation.newDelete(Contract.CONTENT_URI).build());
                     for (ContentValues newPost : newsfeedValues) {
-                        ops.add(ContentProviderOperation.newInsert(NewsPost.Contract.CONTENT_URI).withValues(newPost).build());
+                        ops.add(ContentProviderOperation.newInsert(Contract.CONTENT_URI).withValues(newPost).build());
                     }
-                    contentResolver.applyBatch(NewsPost.Contract.CONTENT_URI.getAuthority(), ops);
+                    contentResolver.applyBatch(Contract.CONTENT_URI.getAuthority(), ops);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -124,6 +130,13 @@ public class VkService extends IntentService {
         bundleUpdate.putBoolean(Constants.REFRESHING_NEWSFEED, false);
         newsfeedUpdateIntent.putExtras(bundleUpdate);
         LocalBroadcastManager.getInstance(this).sendBroadcast(newsfeedUpdateIntent);
+
+        // update all widgets with new data
+        if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
+            AppWidgetManager manager = AppWidgetManager.getInstance(this);
+            int[] appWidgetIds = manager.getAppWidgetIds(new ComponentName(this, NewsfeedWidgetProvider.class));
+            manager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.lvNewsfeedList);
+        }
     }
 
     private void handleActionFetchComments(String ownerId, String postId) {
