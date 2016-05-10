@@ -26,7 +26,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public static final int INVALID_POSITION = -1;
 
     private final Cursor cursor;
+    private boolean needPerformClickOnPost = false;
     private int activatedPosition = INVALID_POSITION;
+    private int newActivatedPosition;
 
     private @ColorInt int cardContentPressedColor;
     private @ColorInt int cardContentDefaultColor;
@@ -68,7 +70,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         this.cursor = cursor;
         this.listener = listener;
         this.isTwoPane = isTwoPane;
-        this.activatedPosition = activatedPosition;
+        this.newActivatedPosition = activatedPosition;
     }
 
     @Override
@@ -105,13 +107,18 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
         if (isTwoPane) {
             if (activatedPosition == INVALID_POSITION) {
-                activatedPosition = 0;
-                GA.sendEvent(GA.createEvent(GA.CATEGORY_USAGE, GA.EVENT_POST_CLICK, String.valueOf(post.id)));
-                listener.onNewsPostClick(post.source_id, post.id);
+                activatedPosition = (newActivatedPosition == INVALID_POSITION ? 0 : newActivatedPosition);
+                needPerformClickOnPost = true;
             }
 
             if (activatedPosition == position) {
                 viewHolder.llCardContent.setBackgroundColor(cardContentPressedColor);
+
+                if (needPerformClickOnPost) {
+                    needPerformClickOnPost = false;
+                    GA.sendEvent(GA.createEvent(GA.CATEGORY_USAGE, GA.EVENT_POST_CLICK, String.valueOf(post.id)));
+                    listener.onNewsPostClick(post.source_id, post.id);
+                }
             } else {
                 viewHolder.llCardContent.setBackgroundColor(cardContentDefaultColor);
             }
